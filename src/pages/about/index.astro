@@ -1,35 +1,117 @@
+
 ---
 import { getEntry, getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { Image } from 'astro:assets';
 import Expos from '../../components/expos.astro';
 
+// Recuperar la página About
 const aboutEntry = await getEntry('about', 'index.ca');
-if (!aboutEntry) throw new Error("No s'ha trobat el fitxer index.ca.md");
+
+if (!aboutEntry) {
+  throw new Error("No s'ha trobat el fitxer index.ca.md");
+}
 
 const { Content } = await render(aboutEntry);
 
+// Recuperar proyectos y excluir los borradores
 const allProjects = await getCollection('projects');
-const fullCV = { exposicions: [], llibres: [], premis: [], 'col·laboracions': [] };
 
-allProjects.forEach(p => {
-  if (p.data.cv) {
-    if (p.data.cv.exposicions) fullCV.exposicions.push(...p.data.cv.exposicions);
-    if (p.data.cv.llibres) fullCV.llibres.push(...p.data.cv.llibres);
-    if (p.data.cv.premis) fullCV.premis.push(...p.data.cv.premis);
-    if (p.data.cv['col·laboracions']) fullCV['col·laboracions'].push(...p.data.cv['col·laboracions']);
-  }
+const publishedProjects = allProjects.filter(
+  (project) => !project.data.draft
+);
+
+// Recuperar el CV manual
+const manualCVEntry = await getEntry('about', 'cv.ca');
+const manualCV = manualCVEntry?.data;
+
+// Estructura agregada del CV
+const fullCV = {
+  exposicions: [] as string[],
+  llibres: [] as string[],
+  premis: [] as string[],
+  'col·laboracions': [] as string[],
+};
+
+type CVKey = keyof typeof fullCV;
+
+// Recopilar información automática de proyectos publicados
+publishedProjects.forEach((project) => {
+  const cv = project.data.cv;
+
+  if (!cv) return;
+
+  fullCV.exposicions.push(...cv.exposicions);
+  fullCV.llibres.push(...cv.llibres);
+  fullCV.premis.push(...cv.premis);
+  fullCV['col·laboracions'].push(...cv['col·laboracions']);
 });
 
-Object.keys(fullCV).forEach(key => fullCV[key].sort());
+// Incorporar información del CV manual
+if (manualCV) {
+  (Object.keys(fullCV) as CVKey[]).forEach((key) => {
+    fullCV[key].push(...(manualCV[key] ?? []));
+  });
+}
+
+// Extraer el último año de cuatro cifras encontrado
+function extractYear(value: string): number | null {
+  const matches = [...value.matchAll(/\b(?:18|19|20|21)\d{2}\b/g)];
+
+  if (matches.length === 0) return null;
+
+  return Number(matches[matches.length - 1][0]);
+}
+
+// Eliminar duplicados y ordenar cronológicamente
+(Object.keys(fullCV) as CVKey[]).forEach((key) => {
+  const uniqueItems = [
+    ...new Set(
+      fullCV[key]
+        .map((item) => item.trim())
+        .filter(Boolean)
+    ),
+  ];
+
+  fullCV[key] = uniqueItems.sort((a, b) => {
+    const yearA = extractYear(a);
+    const yearB = extractYear(b);
+
+    // Las entradas sin año aparecen al final
+    if (yearA === null && yearB !== null) return 1;
+    if (yearA !== null && yearB === null) return -1;
+
+    // Año más reciente primero
+    if (yearA !== null && yearB !== null && yearA !== yearB) {
+      return yearB - yearA;
+    }
+
+    // Desempate alfabético
+    return a.localeCompare(b, 'ca');
+  });
+});
 ---
 
 <BaseLayout title="Sobre jo | Marta Rodriguez Palau" lang="ca">
-  <div class="content-container" style="padding-top: 4rem; padding-bottom: 4rem; min-height: 80vh;">
+  <div
+    class="content-container"
+    style="padding-top: 4rem; padding-bottom: 4rem; min-height: 80vh;"
+  >
     <div class="prose">
-      <Content components={{ img: (props) => <Image {...props} widths={[800, 1200]} sizes="(max-width: 800px) 100vw, 800px" style="width: 100%; height: auto; border-radius: 0; margin: 2rem 0;" /> }} />
+      <Content
+        components={{
+          img: (props) => (
+            <Image
+              {...props}
+              widths={[800, 1200]}
+              sizes="(max-width: 800px) 100vw, 800px"
+              style="width: 100%; height: auto; border-radius: 0; margin: 2rem 0;"
+            />
+          ),
+        }}
+      />
     </div>
-    
+
     <Expos cv={fullCV} lang="ca" />
   </div>
 </BaseLayout>
