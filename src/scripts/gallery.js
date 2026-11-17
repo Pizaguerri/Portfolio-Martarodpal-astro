@@ -1,68 +1,119 @@
+
 import justifiedLayout from "./justified-layout.js";
-import * as params from "@params";
 
-const gallery = document.getElementById("gallery");
+/**
+ * Inicializa una galería justificada.
+ *
+ * @param {HTMLElement|string} gallery
+ * @param {Object} options
+ * @returns {Function} función para limpiar la galería
+ */
+export function initJustifiedGallery(gallery, options = {}) {
+  const element =
+    typeof gallery === "string"
+      ? document.querySelector(gallery)
+      : gallery;
 
-if (gallery) {
-  const items = Array.from(gallery.querySelectorAll(".gallery-item"));
+  if (!(element instanceof HTMLElement)) {
+    return () => {};
+  }
 
-  const getAspectRatios = () =>
-    items.map((item) => {
-      const img = item.querySelector("img");
+  const {
+    itemSelector = ".gallery-item",
+    targetRowHeight = 288,
+    spacing = 8,
+    heightTolerance = 0.25,
+  } = options;
 
-      if (!img) {
-        return 1;
-      }
+  const items = Array.from(element.querySelectorAll(itemSelector));
 
-      const width = Number.parseFloat(img.getAttribute("width"));
-      const height = Number.parseFloat(img.getAttribute("height"));
+  if (!items.length) {
+    return () => {};
+  }
 
-      if (!Number.isFinite(width) || !Number.isFinite(height) || height <= 0) {
-        return 1;
-      }
+  // Guardamos los estilos originales para poder restaurarlos.
+  const originalStyles = new Map();
 
-      img.style.width = "100%";
-      img.style.height = "auto";
+  const properties = [
+    "position",
+    "width",
+    "height",
+    "top",
+    "left",
+    "overflow",
+  ];
 
-      return width / height;
+  const saveStyles = (node, props) => {
+    if (originalStyles.has(node)) return;
+
+    const styles = {};
+
+    props.forEach((property) => {
+      styles[property] = node.style[property];
     });
 
+    originalStyles.set(node, styles);
+  };
+
+  const getAspectRatio = (item) => {
+    const img = item.querySelector("img");
+
+    if (!img) return 1;
+
+    const width =
+      Number.parseFloat(img.getAttribute("width")) ||
+      img.naturalWidth;
+
+    const height =
+      Number.parseFloat(img.getAttribute("height")) ||
+      img.naturalHeight;
+
+    if (
+      !Number.isFinite(width) ||
+      !Number.isFinite(height) ||
+      width <= 0 ||
+      height <= 0
+    ) {
+      return 1;
+    }
+
+    return width / height;
+  };
+
   let containerWidth = 0;
+  let resizeObserver;
 
   const updateGallery = () => {
-    const width = gallery.getBoundingClientRect().width;
+    const width = element.getBoundingClientRect().width;
 
-    if (!width || width === containerWidth) {
+    if (!width || Math.abs(width - containerWidth) < 0.5) {
       return;
     }
 
     containerWidth = width;
 
-    const aspectRatios = getAspectRatios();
-
-    if (!aspectRatios.length) {
-      gallery.style.height = "";
-      gallery.style.visibility = "";
-      return;
-    }
+    const aspectRatios = items.map(getAspectRatio);
 
     const layout = justifiedLayout(aspectRatios, {
       rowWidth: width,
-      spacing: Number.isInteger(params.boxSpacing) ? params.boxSpacing : 8,
-      rowHeight: params.targetRowHeight || 288,
-      heightTolerance: Number.isInteger(params.targetRowHeightTolerance)
-        ? params.targetRowHeightTolerance
-        : 0.25,
+      spacing,
+      rowHeight: targetRowHeight,
+      heightTolerance,
     });
+
+    saveStyles(element, ["position", "height", "visibility"]);
+
+    element.style.position = "relative";
+    element.style.visibility = "hidden";
 
     items.forEach((item, index) => {
       const box = layout.boxes[index];
 
-      if (!box) {
-        return;
-      }
+      if (!box) return;
 
       const { width: boxWidth, height, top, left } = box;
+
+      saveStyles(item, properties);
 
       item.style.position = "absolute";
       item.style.width = `${boxWidth}px`;
@@ -70,20 +121,43 @@ if (gallery) {
       item.style.top = `${top}px`;
       item.style.left = `${left}px`;
       item.style.overflow = "hidden";
+
+      const img = item.querySelector("img");
+
+      if (img) {
+        saveStyles(img, ["width", "height", "objectFit", "display"]);
+
+        img.style.width = "100%";
+        img.style.height = "100%";
+        img.style.objectFit = "contain";
+        img.style.display = "block";
+      }
     });
 
-    gallery.style.position = "relative";
-    gallery.style.height = `${layout.containerHeight}px`;
-    gallery.style.visibility = "";
+    element.style.height = `${layout.containerHeight}px`;
+    element.style.visibility = "";
   };
 
   if ("ResizeObserver" in window) {
-    const resizeObserver = new ResizeObserver(updateGallery);
-    resizeObserver.observe(gallery);
+    resizeObserver = new ResizeObserver(updateGallery);
+    resizeObserver.observe(element);
   } else {
     window.addEventListener("resize", updateGallery);
     window.addEventListener("orientationchange", updateGallery);
   }
 
   updateGallery();
+
+  return () => {
+    resizeObserver?.disconnect();
+
+    window.removeEventListener("resize", updateGallery);
+    window.removeEventListener("orientationchange", updateGallery);
+
+    originalStyles.forEach((styles, node) => {
+      Object.entries(styles).forEach(([property, value]) => {
+        node.style[property] = value;
+      });
+    });
+  };
 }

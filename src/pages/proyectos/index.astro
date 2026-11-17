@@ -1,3 +1,4 @@
+
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
@@ -7,105 +8,128 @@ const projects = (await getCollection('projects'))
   .filter(p => p.id.endsWith('.ca'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const projectsWithImages = await Promise.all(projects.map(async (p) => {
-  const slug = p.id.replace('.ca', '').trim();
-  const projectFolder = slug.toLowerCase();
-  
-  const allImages = import.meta.glob('../../content/projects/**/*.{jpg,jpeg,png,webp}', { eager: true });
-  
-  const coverPath = Object.keys(allImages).find(key => {
-    const keyLower = key.toLowerCase();
-    const fileName = key.split('/').pop().toLowerCase();
-    return keyLower.includes(`/projects/${projectFolder}/`) && 
-           (fileName === 'cover.jpg' || fileName === 'cover.jpeg' || fileName === 'cover.png' || fileName === 'cover.webp');
-  });
+const allImages = import.meta.glob(
+  '../../content/projects/**/*.{jpg,jpeg,png,webp}',
+  { eager: true }
+);
 
-  let coverImage = null;
+const projectsWithImages = await Promise.all(
+  projects.map(async (p) => {
+    const slug = p.id.replace('.ca', '').trim();
+    const projectFolder = slug.toLowerCase();
 
-  if (coverPath) {
-    const src = allImages[coverPath].default;
-    const optimized = await getImage({ src });
-    coverImage = { src, width: optimized.attributes.width, height: optimized.attributes.height };
-  }
+    const coverPath = Object.keys(allImages).find(key => {
+      const keyLower = key.toLowerCase();
+      const fileName = key.split('/').pop().toLowerCase();
 
-  return { ...p, slug, image: coverImage };
-}));
+      return (
+        keyLower.includes(`/projects/${projectFolder}/`) &&
+        ['cover.jpg', 'cover.jpeg', 'cover.png', 'cover.webp'].includes(fileName)
+      );
+    });
+
+    let coverImage = null;
+
+    if (coverPath) {
+      const src = allImages[coverPath].default;
+      const optimized = await getImage({ src });
+
+      coverImage = {
+        src,
+        width: optimized.attributes.width,
+        height: optimized.attributes.height,
+      };
+    }
+
+    return { ...p, slug, image: coverImage };
+  })
+);
 ---
 
 <BaseLayout title="Projectes | Marta Rodriguez Palau">
   <div class="site-container" style="padding-top: 0; padding-bottom: 4rem;">
-    
     <header class="selected-header">
       <h1>Projectes</h1>
     </header>
 
-    <div class="uniform-grid">
+    <div id="projects-gallery" class="justified-gallery">
       {projectsWithImages.map((project) => (
-        <a href={`/proyectos/${project.slug}`} class="grid-item">
-          {project.image && (
-            <Image 
-              src={project.image.src} 
-              alt={project.data.title} 
-              widths={[400, 800, 1200]} 
-              sizes="(max-width: 1200px) 50vw, 33vw" 
+        project.image && (
+          <a
+            href={`/proyectos/${project.slug}`}
+            class="gallery-item"
+            aria-label={`Veure el projecte ${project.data.title}`}
+          >
+            <Image
+              src={project.image.src}
+              alt={project.data.title}
+              widths={[400, 800, 1200]}
+              sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
               width={project.image.width}
               height={project.image.height}
             />
-          )}
-        </a>
+          </a>
+        )
       ))}
     </div>
   </div>
 </BaseLayout>
 
+<script>
+  import { initJustifiedGallery } from '../../scripts/gallery.js';
+
+  let cleanup;
+
+  const initializeGallery = () => {
+    cleanup?.();
+
+    cleanup = initJustifiedGallery('#projects-gallery', {
+      itemSelector: '.gallery-item',
+      targetRowHeight: 280,
+      spacing: 12,
+      heightTolerance: 0.25,
+    });
+  };
+
+  document.addEventListener('astro:page-load', initializeGallery);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeGallery, { once: true });
+  } else {
+    initializeGallery();
+  }
+
+  document.addEventListener('astro:before-swap', () => {
+    cleanup?.();
+    cleanup = undefined;
+  });
+</script>
+
 <style is:global>
-  /* MOSAICO UNIFORME (3:2) */
-  .uniform-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 columnas en PC */
-    gap: 1rem;
+  .justified-gallery {
+    position: relative;
     width: 100%;
   }
 
-  .grid-item {
+  .justified-gallery .gallery-item {
     display: block;
-    cursor: zoom-in;
+    cursor: pointer;
     text-decoration: none;
     overflow: hidden;
     background-color: var(--surface-2);
-    aspect-ratio: 3 / 2; /* Forzamos la proporción 3:2 */
-    position: relative;
   }
 
-  .grid-item img {
+  .justified-gallery .gallery-item img {
+    display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover; /* La imagen se adapta al hueco recortándose si es necesario */
-    display: block;
-    transition: transform 0.4s ease, filter 0.3s ease;
+    object-fit: contain;
+    transition: filter 0.3s ease;
   }
 
-  /* Hover */
-  @media (min-width: 1025px) and (hover: hover) {
-    .grid-item:hover img { 
-      filter: grayscale(100%); 
-      transform: scale(1.05);
-    }
-  }
-
-  /* Responsive */
-  @media (max-width: 900px) {
-    .uniform-grid {
-      grid-template-columns: repeat(2, 1fr); /* 2 columnas en tablet */
-    }
-  }
-
-  @media (max-width: 600px) {
-    .uniform-grid {
-      grid-template-columns: 1fr; /* 1 columna en móvil */
-    }
-    .grid-item {
-      aspect-ratio: auto; /* En móvil dejamos que fluya a su altura natural */
+  @media (hover: hover) {
+    .justified-gallery .gallery-item:hover img {
+      filter: grayscale(100%);
     }
   }
 </style>

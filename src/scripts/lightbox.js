@@ -1,36 +1,63 @@
+
 import PhotoSwipeLightbox from "./photoswipe/photoswipe-lightbox.esm.js";
 import PhotoSwipe from "./photoswipe/photoswipe.esm.js";
 
 let lightbox = null;
+let isNavigating = false;
 
-function initLightbox() {
+const gallerySelector = "#project-gallery-container, #post-gallery";
+const imageSelector = ".slider-item, .post-gallery-item, .grid-item";
+
+function destroyLightbox() {
   if (lightbox) {
     lightbox.destroy();
     lightbox = null;
   }
+}
 
-  // 1. Buscamos cualquiera de los dos IDs (proyectos o selected)
-  const gallery = document.querySelector("#project-gallery-container, #post-gallery");
+function protectImage(element) {
+  if (!element || element.dataset.protected === "true") return;
+
+  element.dataset.protected = "true";
+
+  // Dificultar menú contextual, arrastre y llamada nativa en móviles
+  element.style.setProperty("-webkit-touch-callout", "none");
+  element.style.setProperty("-webkit-user-select", "none");
+  element.style.setProperty("user-select", "none");
+  element.style.setProperty("-webkit-user-drag", "none");
+
+  element.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+  });
+
+  element.addEventListener("dragstart", (event) => {
+    event.preventDefault();
+  });
+}
+
+function initLightbox() {
+  destroyLightbox();
+
+  const gallery = document.querySelector(gallerySelector);
   if (!gallery) return;
 
-  const transEl = document.getElementById('lightbox-translations');
-  const closeTitle = transEl?.dataset.close || 'Tancar';
-  const zoomTitle = transEl?.dataset.zoom || 'Ampliar';
-  const errorMsg = transEl?.dataset.error || 'La foto no es pot carregar';
+  const transEl = document.getElementById("lightbox-translations");
+
+  const closeTitle = transEl?.dataset.close || "Tancar";
+  const zoomTitle = transEl?.dataset.zoom || "Ampliar";
+  const errorMsg = transEl?.dataset.error || "La foto no es pot carregar";
 
   lightbox = new PhotoSwipeLightbox({
-    // 2. Le pasamos el elemento que hemos encontrado
-    gallery: gallery, 
-    // 3. Añadimos la clase .grid-item para que detecte las imágenes de selected
-    children: '.slider-item, .post-gallery-item, .grid-item',
-    
+    gallery,
+    children: imageSelector,
+
     showHideAnimationType: "fade",
     bgOpacity: 0.9,
     pswpModule: PhotoSwipe,
 
     showAnimationDuration: 350,
     hideAnimationDuration: 250,
-    easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+    easing: "cubic-bezier(0.25, 1, 0.5, 1)",
 
     imageClickAction: "close",
     tapAction: "close",
@@ -38,63 +65,87 @@ function initLightbox() {
     pinchClose: "close",
     loop: true,
 
-    padding: { top: 40, bottom: 40, left: 40, right: 40 },
+    padding: {
+      top: 40,
+      bottom: 40,
+      left: 40,
+      right: 40,
+    },
+
     allowPanToNext: true,
     closeOnVerticalDrag: false,
     wheelToZoom: false,
     pinchToZoom: false,
     zoomToOpportunityThreshold: 0,
 
-    closeTitle: closeTitle,
-    zoomTitle: zoomTitle,
-    errorMsg: errorMsg,
+    closeTitle,
+    zoomTitle,
+    errorMsg,
   });
 
-  // --- AÑADIR BOTONES PERSONALIZADOS (FLECHAS) ---
-  lightbox.on('uiRegister', function() {
+  // --- FLECHAS PERSONALIZADAS ---
+  lightbox.on("uiRegister", () => {
     lightbox.pswp.ui.registerElement({
-      name: 'custom-prev-arrow',
+      name: "custom-prev-arrow",
       order: 9,
       isButton: true,
       html: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>`,
-      onClick: (event, el) => { lightbox.pswp.prev(); }
+      onClick: () => {
+        lightbox?.pswp?.prev();
+      },
     });
 
     lightbox.pswp.ui.registerElement({
-      name: 'custom-next-arrow',
+      name: "custom-next-arrow",
       order: 9,
       isButton: true,
       html: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>`,
-      onClick: (event, el) => { lightbox.pswp.next(); }
+      onClick: () => {
+        lightbox?.pswp?.next();
+      },
     });
   });
 
-  lightbox.on('contentActivate', ({ content }) => {
+  // --- PROTECCIÓN DE IMÁGENES EN PHOTOSWIPE ---
+  lightbox.on("contentActivate", ({ content }) => {
     if (content.element) {
-      content.element.addEventListener('contextmenu', (e) => e.preventDefault());
-      content.element.addEventListener('dragstart', (e) => e.preventDefault());
-      content.element.addEventListener('touchstart', (e) => {
-        content._touchTimer = setTimeout(() => e.preventDefault(), 500);
-      }, { passive: false });
-      content.element.addEventListener('touchend', () => clearTimeout(content._touchTimer));
-      content.element.addEventListener('touchmove', () => clearTimeout(content._touchTimer));
+      protectImage(content.element);
     }
   });
 
+  // --- ACTUALIZAR HASH AL CAMBIAR DE IMAGEN ---
   lightbox.on("change", () => {
-    const target = lightbox.pswp?.currSlide?.data?.element?.dataset?.pswpTarget;
-    if (target) history.replaceState("", document.title, `#${target}`);
+    const target =
+      lightbox?.pswp?.currSlide?.data?.element?.dataset?.pswpTarget;
+
+    if (target) {
+      history.replaceState(
+        "",
+        document.title,
+        `${window.location.pathname}${window.location.search}#${target}`
+      );
+    }
   });
 
+  // --- LIMPIAR HASH AL CERRAR ---
   lightbox.on("close", () => {
-    history.replaceState("", document.title, window.location.pathname);
+    if (isNavigating) return;
+
+    history.replaceState(
+      "",
+      document.title,
+      `${window.location.pathname}${window.location.search}`
+    );
   });
 
   lightbox.init();
 
+  // --- ABRIR IMAGEN INDICADA EN LA URL ---
   const hash = window.location.hash.substring(1);
+
   if (hash.length > 1) {
-    const items = gallery.querySelectorAll(".slider-item, .post-gallery-item, .grid-item");
+    const items = gallery.querySelectorAll(imageSelector);
+
     for (let index = 0; index < items.length; index++) {
       if (items[index].dataset.pswpTarget === hash) {
         lightbox.loadAndOpen(index, { gallery });
@@ -104,4 +155,13 @@ function initLightbox() {
   }
 }
 
-document.addEventListener("astro:page-load", initLightbox);
+// --- CICLO DE VIDA DE ASTRO ---
+document.addEventListener("astro:before-swap", () => {
+  isNavigating = true;
+  destroyLightbox();
+});
+
+document.addEventListener("astro:page-load", () => {
+  isNavigating = false;
+  initLightbox();
+});

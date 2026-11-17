@@ -635,6 +635,13 @@ body.home footer section:last-of-type {
   }
 }
 
+img {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
 /* ========== POST GALLERY — EDITORIAL MOSAIC ========== */
 .post-gallery {
   width: 100%;

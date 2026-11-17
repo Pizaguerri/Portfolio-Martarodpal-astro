@@ -1,3 +1,4 @@
+
 /*!
  * Original work Copyright 2019 SmugMug, Inc.
  * Modified work Copyright 2025 Nico Kaiser
@@ -45,6 +46,7 @@ class Row {
 
     this.minAspectRatio =
       (this.rowWidth / params.rowHeight) * (1 - params.heightTolerance);
+
     this.maxAspectRatio =
       (this.rowWidth / params.rowHeight) * (1 + params.heightTolerance);
   }
@@ -110,37 +112,28 @@ class Row {
   }
 
   /**
-   * Set row height and compute item geometry from that height.
+   * Set row height and compute item geometry.
+   *
+   * Each item's width is calculated from its original aspect ratio.
+   * If the row height is clamped, unused horizontal space may remain.
+   * Images are never stretched to fill the row.
    */
   completeLayout(newHeight: number) {
-    const rowWidthWithoutSpacing =
-      this.rowWidth - (this.items.length - 1) * this.spacing;
-
-    let clampedToNativeRatio: number;
-
     const clampedHeight = Math.max(
       0.5 * this.rowHeight,
       Math.min(newHeight, 2 * this.rowHeight),
     );
 
-    if (newHeight !== clampedHeight) {
-      this.height = clampedHeight;
-      clampedToNativeRatio =
-        rowWidthWithoutSpacing /
-        clampedHeight /
-        (rowWidthWithoutSpacing / newHeight);
-    } else {
-      this.height = newHeight;
-      clampedToNativeRatio = 1;
-    }
+    this.height = clampedHeight;
 
     let itemWidthSum = 0;
 
     for (const item of this.items) {
       item.top = this.top;
-      item.width = item.aspectRatio * this.height * clampedToNativeRatio;
+      item.width = item.aspectRatio * this.height;
       item.height = this.height;
       item.left = itemWidthSum;
+
       itemWidthSum += item.width + this.spacing;
     }
   }
@@ -167,24 +160,26 @@ export default function (
       });
     }
 
-    let itemAdded = currentRow.addItem(aspectRatio);
+    const itemAdded = currentRow.addItem(aspectRatio);
 
     if (currentRow.height > 0) {
       lastRowHeight = currentRow.height;
       boxes = boxes.concat(currentRow.items);
       containerHeight += currentRow.height + layoutOptions.spacing;
+
       currentRow = new Row({
         top: containerHeight,
         ...layoutOptions,
       });
 
       if (!itemAdded) {
-        itemAdded = currentRow.addItem(aspectRatio);
+        currentRow.addItem(aspectRatio);
 
         if (currentRow.height > 0) {
           lastRowHeight = currentRow.height;
           boxes = boxes.concat(currentRow.items);
           containerHeight += currentRow.height + layoutOptions.spacing;
+
           currentRow = new Row({
             top: containerHeight,
             ...layoutOptions,
