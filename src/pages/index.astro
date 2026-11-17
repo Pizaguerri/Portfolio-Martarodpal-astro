@@ -1,0 +1,86 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Animate } from 'astro-animations';
+
+// 1. Selected (siempre primero)
+// En lugar de agrupar por carpetas, cogemos TODAS las imágenes sueltas
+const selectedImagesRaw = import.meta.glob('../content/selected/**/*.{jpg,jpeg,png,webp}', { eager: true });
+const selectedImages = Object.keys(selectedImagesRaw).map((path) => selectedImagesRaw[path].default);
+
+// Creamos un único objeto que representa la fila "Senzills"
+const selectedItems = [
+  {
+    type: 'selected',
+    title: 'Senzills',
+    slug: 'senzills',
+    images: selectedImages.slice(0, 5) // Cogemos las 5 primeras
+  }
+];
+
+// 2. Proyectos (orden: más reciente → más antigua)
+const projects = (await getCollection('projects')).filter(p => p.id.endsWith('.ca')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const projectImages = projects.map((p) => {
+  const slug = p.id.replace('.ca', '');
+  const images = import.meta.glob('../content/projects/**/*.{jpg,jpeg,png,webp}', { eager: true });
+  const imgs = Object.keys(images).filter(k => k.includes(`/projects/${slug}/`) && !k.includes('cover')).map(k => images[k].default);
+  return { type: 'project', title: p.data.title, slug: slug, images: imgs.slice(0, 5) };
+});
+
+// Unimos todo: Selected primero, luego proyectos
+const allRows = [...selectedItems, ...projectImages];
+---
+
+<BaseLayout title="MARTA RODRIGUEZ PALAU | ARTISTA">
+  <div class="site-container" style="padding-top: 2rem;">
+    
+    <!-- Introducción -->
+    <header class="home-intro">
+      <p>Artista de Terrassa, a cavall entre Catalunya i Menorca.</p>
+      <p>Gravat, Pintura, Dibuix, Il·lustració, Fotografia i alguna cosa més.</p>
+    </header>
+
+    <!-- Filas de fotos -->
+    <div class="home-rows">
+      {allRows.map((row, index) => (
+        // Las dos primeras filas no llevan animación (entran con el fade de la página)
+        index < 2 ? (
+          <a href={row.type === 'project' ? `/proyectos/${row.slug}` : `/selected`} class="home-row">
+            <div class="home-row-scroll" style="display: flex; flex-direction: row; gap: 0.5rem; overflow-x: auto; width: 100%; scrollbar-width: none;">
+              {row.images.map((img, i) => (
+                <img key={i} src={img.src} alt={row.title} loading="lazy" style="height: 340px; width: auto; flex-shrink: 0; display: block; object-fit: cover;" />
+              ))}
+            </div>
+            <span class="home-row-title">{row.title}</span>
+          </a>
+        ) : (
+          <Animate type="slide" direction="up" duration={1000} easing="ease-out">
+            <a href={row.type === 'project' ? `/proyectos/${row.slug}` : `/selected`} class="home-row">
+              <div class="home-row-scroll" style="display: flex; flex-direction: row; gap: 0.5rem; overflow-x: auto; width: 100%; scrollbar-width: none;">
+                {row.images.map((img, i) => (
+                  <img key={i} src={img.src} alt={row.title} loading="lazy" style="height: 340px; width: auto; flex-shrink: 0; display: block; object-fit: cover;" />
+                ))}
+              </div>
+              <span class="home-row-title">{row.title}</span>
+            </a>
+          </Animate>
+        )
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style is:global>
+  .home-intro {
+    text-align: center;
+    margin-bottom: 4rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .home-intro p {
+    font-size: 1.1rem;
+    color: var(--text-2);
+    margin-bottom: 0.5rem;
+  }
+</style>

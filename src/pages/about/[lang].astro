@@ -1,0 +1,49 @@
+---
+import { getEntry, getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+import Expos from '../../components/expos.astro';
+
+export async function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'en' } },
+  ];
+}
+
+const { lang } = Astro.params;
+const aboutEntry = await getEntry('about', `index.${lang}`);
+if (!aboutEntry) throw new Error(`No s'ha trobat el fitxer index.${lang}.md`);
+
+const { Content } = await render(aboutEntry);
+
+// Recolectamos todo el CV de los proyectos
+const allProjects = await getCollection('projects');
+const fullCV = {
+  exposicions: [],
+  llibres: [],
+  premis: [],
+  'col·laboracions': []
+};
+
+allProjects.forEach(p => {
+  if (p.data.cv) {
+    if (p.data.cv.exposicions) fullCV.exposicions.push(...p.data.cv.exposicions);
+    if (p.data.cv.llibres) fullCV.llibres.push(...p.data.cv.llibres);
+    if (p.data.cv.premis) fullCV.premis.push(...p.data.cv.premis);
+    if (p.data.cv['col·laboracions']) fullCV['col·laboracions'].push(...p.data.cv['col·laboracions']);
+  }
+});
+
+Object.keys(fullCV).forEach(key => fullCV[key].sort());
+---
+
+<BaseLayout title="About | Marta Rodriguez Palau" lang={lang}>
+  <div class="content-container" style="padding-top: 4rem; padding-bottom: 4rem; min-height: 80vh;">
+    <div class="prose">
+      <Content components={{ img: (props) => <Image {...props} widths={[800, 1200]} sizes="(max-width: 800px) 100vw, 800px" style="width: 100%; height: auto; border-radius: 0; margin: 2rem 0;" /> }} />
+    </div>
+    
+    <Expos cv={fullCV} lang={lang} />
+  </div>
+</BaseLayout>

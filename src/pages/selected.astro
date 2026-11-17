@@ -1,0 +1,125 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+
+const allSelectedImages = import.meta.glob('../content/selected/**/*.{jpg,jpeg,png,webp}', { eager: true });
+const selectedItems = Object.keys(allSelectedImages).map(path => ({ 
+  src: allSelectedImages[path].default,
+  ar: allSelectedImages[path].default.width / allSelectedImages[path].default.height
+}));
+---
+
+<BaseLayout title="Selected Works | Marta Rodriguez Palau">
+  <div class="site-container" style="padding-top: 0; padding-bottom: 4rem; position: relative; z-index: 1;">
+    
+    <header class="selected-header">
+      <h1>Senzills</h1>
+    </header>
+
+    <div class="justified-gallery" id="post-gallery">
+      {selectedItems.map((item) => (
+        <a 
+          href={item.src.src} 
+          class="grid-item post-gallery-item" 
+          data-pswp-width={item.src.width} 
+          data-pswp-height={item.src.height}
+          data-ar={item.ar}
+        >
+          <Image 
+            src={item.src} 
+            alt="" 
+            widths={[400, 800, 1200, 1600]} 
+            sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 33vw" 
+          />
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style is:global>
+  .justified-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .grid-item {
+    display: block;
+    cursor: zoom-in;
+    text-decoration: none;
+    overflow: hidden;
+    /* La altura la controla el JS */
+    height: 300px; 
+  }
+
+  .grid-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: filter 0.3s ease;
+  }
+
+  @media (min-width: 1025px) and (hover: hover) {
+    .grid-item:hover img { filter: grayscale(100%); }
+  }
+</style>
+
+<script>
+  function justifyGallery() {
+    const gallery = document.querySelector('.justified-gallery');
+    if (!gallery) return;
+    
+    const items = Array.from(gallery.querySelectorAll('.grid-item')) as HTMLElement[];
+    if (items.length === 0) return;
+
+    const containerWidth = gallery.clientWidth;
+    const targetRowHeight = 300; // Altura ideal de las filas
+    const gap = 8; // 0.5rem en px
+
+    let currentRow: HTMLElement[] = [];
+    let currentRowArSum = 0;
+
+    items.forEach((item) => {
+      const ar = parseFloat(item.dataset.ar || '1');
+      currentRow.push(item);
+      currentRowArSum += ar;
+
+      // Calculamos el ancho total si la fila tuviera la altura objetivo
+      const projectedWidth = currentRowArSum * targetRowHeight + (currentRow.length - 1) * gap;
+
+      // Si superamos el ancho del contenedor, cerramos la fila
+      if (projectedWidth >= containerWidth) {
+        const rowHeight = (containerWidth - (currentRow.length - 1) * gap) / currentRowArSum;
+        
+        currentRow.forEach((rowItem) => {
+          const itemAr = parseFloat(rowItem.dataset.ar || '1');
+          rowItem.style.height = `${rowHeight}px`;
+          rowItem.style.flexBasis = `${itemAr * rowHeight}px`;
+        });
+
+        currentRow = [];
+        currentRowArSum = 0;
+      }
+    });
+
+    // Ajustar la última fila si sobra
+    if (currentRow.length > 0) {
+      const rowHeight = (containerWidth - (currentRow.length - 1) * gap) / currentRowArSum;
+      currentRow.forEach((rowItem) => {
+        const itemAr = parseFloat(rowItem.dataset.ar || '1');
+        // En la última fila, limitamos la altura para que no se estiren demasiado
+        const finalHeight = Math.min(rowHeight, targetRowHeight * 1.5); 
+        rowItem.style.height = `${finalHeight}px`;
+        rowItem.style.flexBasis = `${itemAr * finalHeight}px`;
+        // Para llenar el hueco si sobra, le damos flex-grow
+        rowItem.style.flexGrow = `${itemAr}`;
+      });
+    }
+  }
+
+  document.addEventListener('astro:page-load', justifyGallery);
+  window.addEventListener('resize', justifyGallery);
+</script>
