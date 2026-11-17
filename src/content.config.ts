@@ -1,6 +1,16 @@
+
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
+// Categorías del CV
+const cvSchema = z.object({
+  exposicions: z.array(z.string()).optional().default([]),
+  llibres: z.array(z.string()).optional().default([]),
+  premis: z.array(z.string()).optional().default([]),
+  'col·laboracions': z.array(z.string()).optional().default([]),
+});
+
+// Campos comunes
 const portfolioSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
@@ -12,39 +22,54 @@ const portfolioSchema = z.object({
 
 // Projects
 const projects = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/projects', generateId: ({ entry }) => entry.replace(/\/index\.([a-z]{2})\.md$/, '.$1') }),
+  loader: glob({
+    pattern: '**/*.md',
+    base: './src/content/projects',
+    generateId: ({ entry }) =>
+      entry.replace(/\/index\.([a-z]{2})\.md$/, '.$1'),
+  }),
   schema: portfolioSchema.extend({
-    cv: z.object({
-      exposicions: z.array(z.string()).optional().default([]),
-      llibres: z.array(z.string()).optional().default([]),
-      premis: z.array(z.string()).optional().default([]),
-      'col·laboracions': z.array(z.string()).optional().default([]),
-    }).optional().default({ exposicions: [], llibres: [], premis: [], 'col·laboracions': [] }),
+    cv: cvSchema.default({
+      exposicions: [],
+      llibres: [],
+      premis: [],
+      'col·laboracions': [],
+    }),
   }),
 });
 
-// Blog
-const blog = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/blog', generateId: ({ entry }) => entry.replace(/\/index\.([a-z]{2})\.md$/, '.$1') }),
-  schema: portfolioSchema,
-});
+// Blog (se mantiene la colección original, aunque Marta no la utiliza)
 
 // Selected
 const selected = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/selected', generateId: ({ entry }) => entry.replace(/\/index\.([a-z]{2})\.md$/, '.$1') }),
+  loader: glob({
+    pattern: '**/*.md',
+    base: './src/content/selected',
+    generateId: ({ entry }) =>
+      entry.replace(/\/index\.([a-z]{2})\.md$/, '.$1'),
+  }),
   schema: portfolioSchema,
 });
 
-// About
+// About y CV manual
 const about = defineCollection({
-  loader: glob({ 
-    pattern: '*.md', 
+  loader: glob({
+    pattern: '*.md',
     base: './src/content/about',
-    generateId: ({ entry }) => entry.replace(/\.([a-z]{2})\.md$/, '.$1')
+    generateId: ({ entry }) =>
+      entry.replace(/\.([a-z]{2})\.md$/, '.$1'),
   }),
   schema: z.object({
     title: z.string().optional(),
+    exposicions: z.array(z.string()).optional().default([]),
+    llibres: z.array(z.string()).optional().default([]),
+    premis: z.array(z.string()).optional().default([]),
+    'col·laboracions': z.array(z.string()).optional().default([]),
   }).passthrough(),
 });
 
-export const collections = { projects, blog, selected, about };
+export const collections = {
+  projects,
+  selected,
+  about,
+};
