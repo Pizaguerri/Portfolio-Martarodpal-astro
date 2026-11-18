@@ -1,15 +1,19 @@
-
 ---
-interface Props {
-  cv?: any;
-  lang?: string;
+interface CV {
+  exposicions?: string[];
+  llibres?: string[];
+  premis?: string[];
+  'col·laboracions'?: string[];
 }
 
-const props = Astro.props;
-const cv = props.cv || {};
-const lang = props.lang || 'ca';
+interface Props {
+  cv?: CV;
+  lang?: 'ca' | 'es' | 'en';
+}
 
-const labels: Record<string, any> = {
+const { cv = {}, lang = 'ca' } = Astro.props;
+
+const labels = {
   ca: {
     exposicions: 'EXPOSICIONS',
     llibres: 'LLIBRES',
@@ -30,162 +34,65 @@ const labels: Record<string, any> = {
   },
 };
 
-const l = labels[lang] || labels.ca;
+const l = labels[lang];
 
-const exposicions = cv.exposicions || [];
-const llibres = cv.llibres || [];
-const premis = cv.premis || [];
-const colaboracions = cv['col·laboracions'] || [];
+const sections = [
+  {
+    label: l.exposicions,
+    items: cv.exposicions || [],
+  },
+  {
+    label: l.llibres,
+    items: cv.llibres || [],
+  },
+  {
+    label: l.premis,
+    items: cv.premis || [],
+  },
+  {
+    label: l.colaboracions,
+    items: cv['col·laboracions'] || [],
+  },
+];
 
-const hasData =
-  exposicions.length > 0 ||
-  llibres.length > 0 ||
-  premis.length > 0 ||
-  colaboracions.length > 0;
+const visibleSections = sections.filter(
+  (section) => section.items.length > 0
+);
 ---
 
-{hasData && (
-  <div class="cv-accordion">
-    {exposicions.length > 0 && (
-      <details class="cv-group" name="cv-accordion-group">
-        <summary class="cv-heading">
-          {l.exposicions}
-          <svg
-            class="cv-icon"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </summary>
-        <ul class="cv-list">
-          {exposicions.map((item: string) => <li>{item}</li>)}
-        </ul>
-      </details>
-    )}
+{visibleSections.length > 0 && (
+  <div class="cv">
+    {visibleSections.map((section) => (
+      <section class="cv-section">
+        <h3 class="cv-heading">{section.label}</h3>
 
-    {llibres.length > 0 && (
-      <details class="cv-group" name="cv-accordion-group">
-        <summary class="cv-heading">
-          {l.llibres}
-          <svg
-            class="cv-icon"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </summary>
         <ul class="cv-list">
-          {llibres.map((item: string) => <li>{item}</li>)}
+          {section.items.map((item) => (
+            <li>{item}</li>
+          ))}
         </ul>
-      </details>
-    )}
-
-    {premis.length > 0 && (
-      <details class="cv-group" name="cv-accordion-group">
-        <summary class="cv-heading">
-          {l.premis}
-          <svg
-            class="cv-icon"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </summary>
-        <ul class="cv-list">
-          {premis.map((item: string) => <li>{item}</li>)}
-        </ul>
-      </details>
-    )}
-
-    {colaboracions.length > 0 && (
-      <details class="cv-group" name="cv-accordion-group">
-        <summary class="cv-heading">
-          {l.colaboracions}
-          <svg
-            class="cv-icon"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </summary>
-        <ul class="cv-list">
-          {colaboracions.map((item: string) => <li>{item}</li>)}
-        </ul>
-      </details>
-    )}
+      </section>
+    ))}
   </div>
 )}
 
 <style>
-  .cv-accordion {
-    margin-top: 0;
+  .cv {
+    margin: 0;
+  }
+
+  .cv-section {
+    margin: 0;
   }
 
   .cv-heading {
+    margin: 0;
+    padding: 1rem 0;
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.05em;
-    padding: 1rem 0;
-    cursor: pointer;
-    list-style: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     color: var(--text-1);
-    transition: color 0.3s ease;
-    user-select: none;
     text-transform: uppercase;
-  }
-
-  .cv-heading::-webkit-details-marker {
-    display: none;
-  }
-
-  .cv-heading:hover {
-    color: #6F362B;
-  }
-
-  .cv-icon {
-    width: 14px;
-    height: 14px;
-    transition: transform 0.3s ease, color 0.3s ease;
-  }
-
-  details[open] .cv-icon {
-    transform: rotate(180deg);
-    color: #6F362B;
   }
 
   .cv-list {
@@ -201,6 +108,6 @@ const hasData =
     font-size: 0.85rem;
     color: var(--text-2);
     line-height: 1.4;
-    padding-left: 0;
+    padding: 0;
   }
 </style>
