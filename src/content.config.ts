@@ -2,22 +2,30 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-// Categorías del CV
+// Categorías comunes del CV
 const cvSchema = z.object({
   exposicions: z.array(z.string()).optional().default([]),
-  llibres: z.array(z.string()).optional().default([]),
+  publicacions_i_col·laboracions: z.array(z.string()).optional().default([]),
   premis: z.array(z.string()).optional().default([]),
-  'col·laboracions': z.array(z.string()).optional().default([]),
 });
 
-// Campos comunes
+// Campos comunes de proyectos y contenido editorial
 const portfolioSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
   date: z.coerce.date().optional(),
   tags: z.array(z.string()).optional().default([]),
-  summary: z.string().optional(),
+  summary_en: z.string().optional(),
   draft: z.boolean().optional().default(false),
+});
+
+// Proyectos con información curricular
+const portfolioWithCvSchema = portfolioSchema.extend({
+  cv: cvSchema.default({
+    exposicions: [],
+    publicacions_i_col·laboracions: [],
+    premis: [],
+  }),
 });
 
 // Projects
@@ -28,17 +36,8 @@ const projects = defineCollection({
     generateId: ({ entry }) =>
       entry.replace(/\/index\.([a-z]{2})\.md$/, '.$1'),
   }),
-  schema: portfolioSchema.extend({
-    cv: cvSchema.default({
-      exposicions: [],
-      llibres: [],
-      premis: [],
-      'col·laboracions': [],
-    }),
-  }),
+  schema: portfolioWithCvSchema,
 });
-
-// Blog (se mantiene la colección original, aunque Marta no la utiliza)
 
 // Selected
 const selected = defineCollection({
@@ -62,9 +61,8 @@ const about = defineCollection({
   schema: z.object({
     title: z.string().optional(),
     exposicions: z.array(z.string()).optional().default([]),
-    llibres: z.array(z.string()).optional().default([]),
+    publicacions_i_col·laboracions: z.array(z.string()).optional().default([]),
     premis: z.array(z.string()).optional().default([]),
-    'col·laboracions': z.array(z.string()).optional().default([]),
   }).passthrough(),
 });
 

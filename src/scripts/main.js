@@ -1,21 +1,29 @@
 
 import "./lightbox.js";
 
-// Estado compartido
+// =========================================
+// 1. ESTADO COMPARTIDO
+// =========================================
+
 let lastScrollY = window.scrollY;
 
-// --- 1. MENÚ MÓVIL ---
+// =========================================
+// 2. MENÚ MÓVIL
+// =========================================
+
 document.addEventListener("click", (event) => {
   const target = event.target;
 
   if (!(target instanceof Element)) return;
 
   const button = target.closest("#menu-toggle");
+
   if (!button) return;
 
   event.preventDefault();
 
   const menu = document.getElementById("menu");
+
   if (!menu) return;
 
   const isOpen = button.getAttribute("aria-expanded") === "true";
@@ -30,7 +38,10 @@ document.addEventListener("click", (event) => {
   menu.classList.toggle("hidden", !nextState);
 });
 
-// --- 2. SCROLL: MENÚ Y HEADER ---
+// =========================================
+// 3. SCROLL: MENÚ Y HEADER
+// =========================================
+
 window.addEventListener(
   "scroll",
   () => {
@@ -60,7 +71,10 @@ window.addEventListener(
   { passive: true }
 );
 
-// --- 3. REINICIAR ESTADO EN CADA NAVEGACIÓN ---
+// =========================================
+// 4. REINICIAR ESTADO EN CADA NAVEGACIÓN
+// =========================================
+
 document.addEventListener("astro:page-load", () => {
   const menu = document.getElementById("menu");
   const button = document.getElementById("menu-toggle");
@@ -77,51 +91,40 @@ document.addEventListener("astro:page-load", () => {
   header?.classList.remove("header-hidden");
 });
 
-// --- 4. PROTECCIÓN DE IMÁGENES ---
+// =========================================
+// 5. PROTECCIÓN DE IMÁGENES
+// =========================================
+
 const isImageTarget = (target) => {
   if (!(target instanceof Element)) return false;
 
-  return (
-    target instanceof HTMLImageElement ||
-    target.closest("img") !== null
-  );
+  // Detectar si el evento comienza sobre una imagen.
+  if (target.closest("img")) return true;
+
+  // Detectar también el enlace que contiene la imagen.
+  const link = target.closest("a");
+
+  return Boolean(link?.querySelector("img"));
 };
 
-// Bloquear menú contextual
-document.addEventListener("contextmenu", (event) => {
-  if (isImageTarget(event.target)) {
-    event.preventDefault();
-  }
-});
-
-// Bloquear arrastre de imágenes
-document.addEventListener("dragstart", (event) => {
-  if (isImageTarget(event.target)) {
-    event.preventDefault();
-  }
-});
-
-// Seguimiento de pulsación prolongada en móviles
-let touchTimer;
-
+// Bloquear menú contextual sobre imágenes y sus enlaces.
 document.addEventListener(
-  "touchstart",
+  "contextmenu",
   (event) => {
-    if (!isImageTarget(event.target)) return;
-
-    clearTimeout(touchTimer);
-
-    touchTimer = window.setTimeout(() => {
-      touchTimer = undefined;
-    }, 500);
+    if (isImageTarget(event.target)) {
+      event.preventDefault();
+    }
   },
-  { passive: true }
+  true
 );
 
-document.addEventListener("touchend", () => {
-  clearTimeout(touchTimer);
-});
-
-document.addEventListener("touchmove", () => {
-  clearTimeout(touchTimer);
-});
+// Bloquear arrastre sobre imágenes y sus enlaces.
+document.addEventListener(
+  "dragstart",
+  (event) => {
+    if (isImageTarget(event.target)) {
+      event.preventDefault();
+    }
+  },
+  true
+);
