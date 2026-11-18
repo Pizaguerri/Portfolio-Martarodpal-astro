@@ -4,6 +4,11 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { Image, getImage } from 'astro:assets';
 import Expos from '../../components/expos.astro';
+import Tags from '../../components/Tags.astro';
+import Disclosure from '../../components/Disclosure.astro';
+import { useTranslations } from '../../i18n/utils';
+
+const t = useTranslations('ca');
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -44,29 +49,40 @@ const isCover = (path) => {
   ].includes(fileName);
 };
 
-const galleryPaths = Object.keys(allImages).filter((key) => {
-  const keyLower = key.toLowerCase();
-
-  return (
-    keyLower.includes(`/projects/${projectFolder}/`) &&
-    !isCover(key)
-  );
-});
-
-const galleryImages = await Promise.all(
-  galleryPaths.map(async (key) => {
-    const src = allImages[key].default;
-    const optimized = await getImage({ src });
-
-    return {
-      src,
-      width: optimized.attributes.width,
-      height: optimized.attributes.height,
-    };
-  })
+const projectImagePaths = Object.keys(allImages).filter((key) =>
+  key.toLowerCase().includes(`/projects/${projectFolder}/`)
 );
 
-const sliderImages = galleryImages;
+const coverPath = projectImagePaths.find(isCover);
+
+const galleryPaths = projectImagePaths
+  .filter((key) => !isCover(key))
+  .sort();
+
+const optimizeImage = async (key) => {
+  const src = allImages[key].default;
+  const optimized = await getImage({ src });
+
+  return {
+    src,
+    width: optimized.attributes.width,
+    height: optimized.attributes.height,
+  };
+};
+
+const coverImage = coverPath
+  ? await optimizeImage(coverPath)
+  : null;
+
+const galleryImages = await Promise.all(
+  galleryPaths.map(optimizeImage)
+);
+
+const sliderImages = coverImage
+  ? [coverImage, ...galleryImages]
+  : galleryImages;
+
+const englishSummary = project.data.summary_en?.trim();
 ---
 
 <BaseLayout
@@ -76,7 +92,11 @@ const sliderImages = galleryImages;
   <div id="project-gallery-container">
 
     <!-- SLIDER HORIZONTAL -->
-    <div class="slider-container" id="slider-container">
+    <div
+      class="slider-container"
+      id="slider-container"
+      data-pswp-active="true"
+    >
       <div class="slider-track" id="slider-track">
         {sliderImages.map((img, index) => (
           <a
@@ -101,6 +121,7 @@ const sliderImages = galleryImages;
     <div
       class="mosaic-container"
       id="mosaic-container"
+      data-pswp-active="false"
       style="display: none;"
     >
       <div class="site-container mosaic-inner">
@@ -149,6 +170,7 @@ const sliderImages = galleryImages;
             aria-label="Alternar vista"
             title="Ver galería/mosaico"
             aria-pressed="false"
+            type="button"
           >
             <svg
               id="icon-grid"
@@ -193,13 +215,15 @@ const sliderImages = galleryImages;
           </button>
         </div>
 
-        <div class="project-tags">
-          {project.data.tags?.map((tag) => (
-            <span class="tag-text">{tag}</span>
-          ))}
-        </div>
+        <Tags tags={project.data.tags} />
 
         <Expos cv={project.data.cv} lang="ca" />
+
+        {englishSummary && (
+          <Disclosure title={t('englishSummary')}>
+            <p>{englishSummary}</p>
+          </Disclosure>
+        )}
       </div>
 
       <!-- COLUMNA DERECHA -->
@@ -368,20 +392,6 @@ const sliderImages = galleryImages;
     background: var(--surface-2);
   }
 
-  .project-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .tag-text {
-    font-size: 0.8rem;
-    color: var(--text-2);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
   .project-main {
     display: flex;
     flex-direction: column;
@@ -434,68 +444,104 @@ const sliderImages = galleryImages;
 </style>
 
 <script>
+  import { initJustifiedGallery } from '../../scripts/gallery.js';
 
-import { initJustifiedGallery } from '../../scripts/gallery.js';
+  let cleanupGallery = null;
+  let toggleHandler = null;
 
-let cleanupGallery;
+  function setActiveView(isMosaic) {
+    const sliderContainer = document.getElementById('slider-container');
+    const mosaicContainer = document.getElementById('mosaic-container');
+    const iconGrid = document.getElementById('icon-grid');
+    const iconSlider = document.getElementById('icon-slider');
+    const toggleBtn = document.getElementById('toggle-gallery-btn');
 
-const cleanup = () => {
-  cleanupGallery?.();
-  cleanupGallery = undefined;
-};
+    if (
+      !sliderContainer ||
+      !mosaicContainer ||
+      !iconGrid ||
+      !iconSlider ||
+      !toggleBtn
+    ) {
+      return;
+    }
 
-const handleDocumentClick = (event) => {
-  const button = event.target.closest('#toggle-gallery-btn');
+    sliderContainer.style.display = isMosaic ? 'none' : 'block';
+    mosaicContainer.style.display = isMosaic ? 'block' : 'none';
 
-  if (!button) return;
+    sliderContainer.dataset.pswpActive = String(!isMosaic);
+    mosaicContainer.dataset.pswpActive = String(isMosaic);
 
-  const sliderContainer = document.getElementById('slider-container');
-  const mosaicContainer = document.getElementById('mosaic-container');
-  const iconGrid = document.getElementById('icon-grid');
-  const iconSlider = document.getElementById('icon-slider');
+    iconGrid.style.display = isMosaic ? 'none' : 'block';
+    iconSlider.style.display = isMosaic ? 'block' : 'none';
 
-  if (!sliderContainer || !mosaicContainer || !iconGrid || !iconSlider) {
-    return;
-  }
+    toggleBtn.setAttribute('aria-pressed', String(isMosaic));
 
-  const isSliderVisible =
-    sliderContainer.style.display !== 'none';
+    cleanupGallery?.();
+    cleanupGallery = null;
 
-  if (isSliderVisible) {
-    sliderContainer.style.display = 'none';
-    mosaicContainer.style.display = 'block';
+    if (isMosaic) {
+      const gallery = document.getElementById('project-mosaic-gallery');
 
-    iconGrid.style.display = 'none';
-    iconSlider.style.display = 'block';
-
-    button.setAttribute('aria-pressed', 'true');
-
-    cleanup();
-
-    cleanupGallery = initJustifiedGallery(
-      '#project-mosaic-gallery',
-      {
-        itemSelector: '.post-gallery-item',
-        targetRowHeight: 288,
-        spacing: 12,
-        heightTolerance: 0.25,
+      if (gallery) {
+        cleanupGallery = initJustifiedGallery(gallery, {
+          itemSelector: '.gallery-item',
+          targetRowHeight: 288,
+          spacing: 12,
+          heightTolerance: 0.25,
+        });
       }
-    );
-  } else {
-    sliderContainer.style.display = 'block';
-    mosaicContainer.style.display = 'none';
-
-    iconGrid.style.display = 'block';
-    iconSlider.style.display = 'none';
-
-    button.setAttribute('aria-pressed', 'false');
-
-    cleanup();
+    }
   }
-};
 
-document.addEventListener('click', handleDocumentClick);
+  function initProjectGallery() {
+    cleanupGallery?.();
+    cleanupGallery = null;
 
-document.addEventListener('astro:before-swap', cleanup);
+    const toggleBtn = document.getElementById('toggle-gallery-btn');
 
+    if (!toggleBtn) return;
+
+    if (toggleHandler) {
+      toggleBtn.removeEventListener('click', toggleHandler);
+    }
+
+    toggleHandler = () => {
+      const mosaicContainer = document.getElementById('mosaic-container');
+
+      if (!mosaicContainer) return;
+
+      const isMosaicVisible =
+        mosaicContainer.style.display !== 'none';
+
+      setActiveView(!isMosaicVisible);
+
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    };
+
+    toggleBtn.addEventListener('click', toggleHandler);
+
+    setActiveView(false);
+  }
+
+  function cleanupProjectGallery() {
+    cleanupGallery?.();
+    cleanupGallery = null;
+
+    const toggleBtn = document.getElementById('toggle-gallery-btn');
+
+    if (toggleBtn && toggleHandler) {
+      toggleBtn.removeEventListener('click', toggleHandler);
+    }
+
+    toggleHandler = null;
+  }
+
+  document.addEventListener('astro:page-load', initProjectGallery);
+  document.addEventListener('astro:before-swap', cleanupProjectGallery);
+
+  initProjectGallery();
 </script>

@@ -1,8 +1,10 @@
+
 ---
 import { getEntry, getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { Image } from 'astro:assets';
-import Expos from '../../components/expos.astro';
+import { buildCV } from '../../utils/cv';
+import CVCategory from '../../components/CVCategory.astro';
 
 export async function getStaticPaths() {
   return [
@@ -12,38 +14,76 @@ export async function getStaticPaths() {
 }
 
 const { lang } = Astro.params;
+const cvLang = lang === 'es' || lang === 'en' ? lang : 'ca';
+
 const aboutEntry = await getEntry('about', `index.${lang}`);
-if (!aboutEntry) throw new Error(`No s'ha trobat el fitxer index.${lang}.md`);
+
+if (!aboutEntry) {
+  throw new Error(`No s'ha trobat el fitxer index.${lang}.md`);
+}
 
 const { Content } = await render(aboutEntry);
 
-// Recolectamos todo el CV de los proyectos
+// Recuperar proyectos y excluir borradores
 const allProjects = await getCollection('projects');
-const fullCV = {
-  exposicions: [],
-  llibres: [],
-  premis: [],
-  'col·laboracions': []
-};
 
-allProjects.forEach(p => {
-  if (p.data.cv) {
-    if (p.data.cv.exposicions) fullCV.exposicions.push(...p.data.cv.exposicions);
-    if (p.data.cv.llibres) fullCV.llibres.push(...p.data.cv.llibres);
-    if (p.data.cv.premis) fullCV.premis.push(...p.data.cv.premis);
-    if (p.data.cv['col·laboracions']) fullCV['col·laboracions'].push(...p.data.cv['col·laboracions']);
-  }
-});
+const publishedProjects = allProjects.filter(
+  (project) => !project.data.draft
+);
 
-Object.keys(fullCV).forEach(key => fullCV[key].sort());
+// Recuperar el CV manual
+const manualCVEntry = await getEntry('about', 'cv.ca');
+const manualCV = manualCVEntry?.data;
+
+// Construir el CV combinado
+const fullCV = buildCV(publishedProjects, manualCV);
 ---
 
 <BaseLayout title="About | Marta Rodriguez Palau" lang={lang}>
-  <div class="content-container" style="padding-top: 4rem; padding-bottom: 4rem; min-height: 80vh;">
+  <div
+    class="content-container"
+    style="padding-top: 4rem; padding-bottom: 4rem; min-height: 80vh;"
+  >
     <div class="prose">
-      <Content components={{ img: (props) => <Image {...props} widths={[800, 1200]} sizes="(max-width: 800px) 100vw, 800px" style="width: 100%; height: auto; border-radius: 0; margin: 2rem 0;" /> }} />
+      <Content
+        components={{
+          img: (props) => (
+            <Image
+              {...props}
+              widths={[800, 1200]}
+              sizes="(max-width: 800px) 100vw, 800px"
+              style="width: 100%; height: auto; border-radius: 0; margin: 2rem 0;"
+            />
+          ),
+        }}
+      />
+
+      <div class="about-cv">
+        <CVCategory
+          category="exposicions"
+          items={fullCV.exposicions}
+          lang={cvLang}
+        />
+        <CVCategory
+          category="publicacions_i_col·laboracions"
+          items={fullCV.publicacions_i_col·laboracions}
+          lang={cvLang}
+        />
+        <CVCategory
+          category="premis"
+          items={fullCV.premis}
+          lang={cvLang}
+        />
+      </div>
     </div>
-    
-    <Expos cv={fullCV} lang={lang} />
   </div>
 </BaseLayout>
+
+<style>
+  .about-cv {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin: 3rem 0;
+  }
+</style>

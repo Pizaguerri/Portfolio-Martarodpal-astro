@@ -3,16 +3,23 @@
 import { getEntry, getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { Image } from 'astro:assets';
-import Expos from '../../components/expos.astro';
+import { buildCV } from '../../utils/cv';
+import CVCategory from '../../components/CVCategory.astro';
 
-// Recuperar la página About
+// Recuperar la página About y su segundo fragmento
 const aboutEntry = await getEntry('about', 'index.ca');
+const aboutAfterEntry = await getEntry('about', 'index-after.ca');
 
 if (!aboutEntry) {
   throw new Error("No s'ha trobat el fitxer index.ca.md");
 }
 
-const { Content } = await render(aboutEntry);
+if (!aboutAfterEntry) {
+  throw new Error("No s'ha trobat el fitxer index-after.ca.md");
+}
+
+const { Content: AboutContent } = await render(aboutEntry);
+const { Content: AboutAfterContent } = await render(aboutAfterEntry);
 
 // Recuperar proyectos y excluir los borradores
 const allProjects = await getCollection('projects');
@@ -25,80 +32,51 @@ const publishedProjects = allProjects.filter(
 const manualCVEntry = await getEntry('about', 'cv.ca');
 const manualCV = manualCVEntry?.data;
 
-// Estructura agregada del CV
-const fullCV = {
-  exposicions: [] as string[],
-  llibres: [] as string[],
-  premis: [] as string[],
-  'col·laboracions': [] as string[],
-};
-
-type CVKey = keyof typeof fullCV;
-
-// Recopilar información automática de proyectos publicados
-publishedProjects.forEach((project) => {
-  const cv = project.data.cv;
-
-  if (!cv) return;
-
-  fullCV.exposicions.push(...cv.exposicions);
-  fullCV.llibres.push(...cv.llibres);
-  fullCV.premis.push(...cv.premis);
-  fullCV['col·laboracions'].push(...cv['col·laboracions']);
-});
-
-// Incorporar información del CV manual
-if (manualCV) {
-  (Object.keys(fullCV) as CVKey[]).forEach((key) => {
-    fullCV[key].push(...(manualCV[key] ?? []));
-  });
-}
-
-// Extraer el último año de cuatro cifras encontrado
-function extractYear(value: string): number | null {
-  const matches = [...value.matchAll(/\b(?:18|19|20|21)\d{2}\b/g)];
-
-  if (matches.length === 0) return null;
-
-  return Number(matches[matches.length - 1][0]);
-}
-
-// Eliminar duplicados y ordenar cronológicamente
-(Object.keys(fullCV) as CVKey[]).forEach((key) => {
-  const uniqueItems = [
-    ...new Set(
-      fullCV[key]
-        .map((item) => item.trim())
-        .filter(Boolean)
-    ),
-  ];
-
-  fullCV[key] = uniqueItems.sort((a, b) => {
-    const yearA = extractYear(a);
-    const yearB = extractYear(b);
-
-    // Las entradas sin año aparecen al final
-    if (yearA === null && yearB !== null) return 1;
-    if (yearA !== null && yearB === null) return -1;
-
-    // Año más reciente primero
-    if (yearA !== null && yearB !== null && yearA !== yearB) {
-      return yearB - yearA;
-    }
-
-    // Desempate alfabético
-    return a.localeCompare(b, 'ca');
-  });
-});
+// Construir el CV combinado
+const fullCV = buildCV(publishedProjects, manualCV);
 ---
 
-<BaseLayout title="Sobre jo | Marta Rodriguez Palau" lang="ca">
+<BaseLayout
+  title="Sobre jo | Marta Rodriguez Palau"
+  lang="ca"
+>
   <div
     class="content-container"
     style="padding-top: 4rem; padding-bottom: 4rem; min-height: 80vh;"
   >
     <div class="prose">
-      <Content
+      <AboutContent
+        components={{
+          img: (props) => (
+            <Image
+              {...props}
+              widths={[800, 1200]}
+              sizes="(max-width: 800px) 100vw, 800px"
+              style="width: 100%; height: auto; border-radius: 0; margin: 2rem 0;"
+            />
+          ),
+        }}
+      />
+
+      <div class="about-cv">
+        <CVCategory
+          category="exposicions"
+          items={fullCV.exposicions}
+          lang="ca"
+        />
+        <CVCategory
+          category="publicacions_i_col·laboracions"
+          items={fullCV.publicacions_i_col·laboracions}
+          lang="ca"
+        />
+        <CVCategory
+          category="premis"
+          items={fullCV.premis}
+          lang="ca"
+        />
+      </div>
+
+      <AboutAfterContent
         components={{
           img: (props) => (
             <Image
@@ -111,7 +89,14 @@ function extractYear(value: string): number | null {
         }}
       />
     </div>
-
-    <Expos cv={fullCV} lang="ca" />
   </div>
 </BaseLayout>
+
+<style>
+  .about-cv {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin: 3rem 0;
+  }
+</style>

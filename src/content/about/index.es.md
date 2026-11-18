@@ -4,7 +4,7 @@ type: "page"
 layout: "single"
 date: 2026-06-04
 ---
-
+CAST
 <img src="/images/about.jpg" class="" alt="Foto de Marta Rodriguez Palau">
 
 Nascuda a Terrassa el 1996, sempre vaig trobar en el dibuix un espai de refugi, imaginació i introspecció. A mesura que creava dibuixos, ells m’anaven creant a mi. El 2016 vaig començar els meus estudis en Dibuix Artístic, que han acompanyat fins ara la meva carrera com a psicòloga.
