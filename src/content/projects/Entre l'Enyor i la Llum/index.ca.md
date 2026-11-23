@@ -10,6 +10,11 @@ cv:
   - "Goletart, Mallorca, 2025"
   col·laboracions:
   - "Revista Branca, Casa, 2026"
+layout: diptych
+imageOrder:
+  - entrelenyorilallum-3.jpg
+  - entrelenyorilallum-1.jpg
+  - entrelenyorilallum-2.jpg
 ---
 
 **_Entre l'enyor i la llum_** és un projecte col·laboratiu amb la il·lustradora Gemma Pellejero en el marc de la mostra d'art de Binissalem, _Goletart 2025_, a Mallorca.

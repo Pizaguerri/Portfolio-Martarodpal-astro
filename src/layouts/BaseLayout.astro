@@ -1,4 +1,3 @@
-
 ---
 import "../styles/main.scss";
 import { AstroAnimations } from 'astro-animations';
@@ -32,9 +31,6 @@ const isAboutPage = Astro.url.pathname.startsWith('/about');
         <ClientRouter />
 
         <style is:global>
-            /* =========================================
-               CONTENEDOR MAESTRO
-               ========================================= */
             .site-container {
                 width: 100%;
                 max-width: 1400px;
@@ -91,68 +87,6 @@ const isAboutPage = Astro.url.pathname.startsWith('/about');
                 transform: translateY(-100%);
             }
 
-            /* Encabezado: colores adaptados al tema */
-            html.dark body > header,
-            html.light body > header {
-                background-color: var(--surface-1) !important;
-                color: var(--text-1) !important;
-            }
-
-            /* Menú móvil */
-            #menu {
-                position: fixed !important;
-                top: 70px !important;
-                left: 0 !important;
-                right: 0 !important;
-                width: 100vw !important;
-                background-color: var(--surface-1) !important;
-                color: var(--text-1) !important;
-                backdrop-filter: blur(10px);
-                z-index: 999999 !important;
-                padding: 0;
-                display: none;
-                flex-direction: column;
-                gap: 0;
-            }
-
-            #menu:not(.hidden) {
-                display: flex !important;
-            }
-
-            #menu ul {
-                list-style: none;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                flex-direction: column;
-                gap: 0;
-                width: 100%;
-            }
-
-            #menu li {
-                width: 100%;
-                border: none;
-            }
-
-            #menu li a {
-                text-decoration: none;
-                color: inherit;
-                font-weight: 500;
-                padding: 1.5rem 2rem;
-                display: block;
-                width: 100%;
-                text-align: center;
-                transition: background-color 0.2s ease;
-            }
-
-            #menu li a:hover {
-                background-color: rgba(0, 0, 0, 0.02);
-            }
-
-            html.dark #menu li a:hover {
-                background-color: rgba(255, 255, 255, 0.1);
-            }
-
             .card,
             .card figure,
             .card > img,
@@ -176,9 +110,6 @@ const isAboutPage = Astro.url.pathname.startsWith('/about');
                 }
             }
 
-            /* =========================================
-               FOOTER
-               ========================================= */
             footer {
                 margin-top: 2rem;
                 border-top: 1px solid var(--border);
@@ -276,17 +207,11 @@ const isAboutPage = Astro.url.pathname.startsWith('/about');
                 }
             }
 
-            /* =========================================
-               TRANSICIONES DE PÁGINA OPTIMIZADAS
-               ========================================= */
-
-            /* Desactivamos la animación de redimensionado del grupo root */
             ::view-transition-group(root),
             ::view-transition-group(main) {
                 animation: none !important;
             }
 
-            /* El header se queda fijo, sin animación */
             #main-header {
                 view-transition-name: site-header;
             }
@@ -300,7 +225,6 @@ const isAboutPage = Astro.url.pathname.startsWith('/about');
                 mix-blend-mode: normal;
             }
 
-            /* Solo hacemos un fade-in suave en el root */
             ::view-transition-old(root) {
                 animation: none !important;
             }
@@ -314,7 +238,6 @@ const isAboutPage = Astro.url.pathname.startsWith('/about');
                 from {
                     opacity: 0;
                 }
-
                 to {
                     opacity: 1;
                 }
@@ -348,21 +271,34 @@ const isAboutPage = Astro.url.pathname.startsWith('/about');
                     </ul>
                 </nav>
 
-                <button id="menu-toggle" class="menu-toggle-btn" aria-expanded="false" aria-label={t('menu')}>
-                    <svg class="icon-open" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="3" y1="12" x2="21" y2="12"></line>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                <nav id="menu" class="mobile-nav" aria-label={t('menu')}>
+                    <ul>
+                        <li><a href="/indice">{t('nav.index')}</a></li>
+                        <li><a href="/about">{t('nav.about')}</a></li>
+                    </ul>
+                </nav>
+
+                <button
+                    id="menu-toggle"
+                    class="menu-toggle-btn"
+                    aria-expanded="false"
+                    aria-label={t('menu')}
+                    aria-controls="menu"
+                    type="button"
+                >
+                    <svg class="icon-open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
-                    <svg class="icon-close" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
+
+                    <svg class="icon-close" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <line x1="5" y1="5" x2="19" y2="19"></line>
+                        <line x1="19" y1="5" x2="5" y2="19"></line>
                     </svg>
                 </button>
             </div>
         </header>
 
-        <!-- ELIMINADO transition:animate="fade" -->
         <main>
             <slot />
         </main>
@@ -407,13 +343,6 @@ const isAboutPage = Astro.url.pathname.startsWith('/about');
                 </div>
             </div>
         </footer>
-
-        <div id="menu" class="hidden">
-            <ul>
-                <li><a href="/indice">{t('nav.index')}</a></li>
-                <li><a href="/about">{t('nav.about')}</a></li>
-            </ul>
-        </div>
 
         <script>
             import "../scripts/main.js";
