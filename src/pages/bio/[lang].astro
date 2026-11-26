@@ -1,0 +1,82 @@
+
+---
+import { getEntry, getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AboutImage from '../../components/AboutImage.astro';
+import { buildCV } from '../../utils/cv';
+import CVCategory from '../../components/CVCategory.astro';
+
+export async function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'en' } },
+  ];
+}
+
+const { lang } = Astro.params;
+const cvLang = lang === 'es' || lang === 'en' ? lang : 'ca';
+
+const bioEntry = await getEntry('bio', `index.${lang}`);
+
+if (!bioEntry) {
+  throw new Error(`No s'ha trobat el fitxer index.${lang}.md`);
+}
+
+const { Content } = await render(bioEntry);
+
+// Recuperar el CV manual
+const manualCVEntry = await getEntry('bio', 'cv.ca');
+const manualCV = manualCVEntry?.data;
+
+// Recuperar proyectos y excluir borradores
+const projects = await getCollection('work');
+
+const publishedProjects = projects.filter(
+  (project) => !project.data.draft
+);
+
+// Construir el CV combinado
+const fullCV = buildCV(publishedProjects, manualCV);
+---
+
+<BaseLayout title="Bio | Marta Rodriguez Palau" lang={lang}>
+  <div
+    class="content-container"
+    style="padding-top: 4rem; padding-bottom: 4rem; min-height: 80vh;"
+  >
+    <div class="prose">
+      <Content
+        components={{
+          img: AboutImage,
+        }}
+      />
+
+      <div class="bio-cv">
+        <CVCategory
+          category="exposicions"
+          items={fullCV.exposicions}
+          lang={cvLang}
+        />
+        <CVCategory
+          category="publicacions_i_col·laboracions"
+          items={fullCV.publicacions_i_col·laboracions}
+          lang={cvLang}
+        />
+        <CVCategory
+          category="premis"
+          items={fullCV.premis}
+          lang={cvLang}
+        />
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .bio-cv {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin: 3rem 0;
+  }
+</style>

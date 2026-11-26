@@ -1,0 +1,553 @@
+
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Expos from '../../components/expos.astro';
+import Disclosure from '../../components/Disclosure.astro';
+import Tags from '../../components/Tags.astro';
+import { useTranslations } from '../../i18n/utils.js';
+import mediaManifest from '../../data/media-manifest.json';
+import { mediaUrl } from '../../utils/media.js';
+
+const t = useTranslations('ca');
+
+export async function getStaticPaths() {
+  const works = await getCollection('work', ({ data }) => !data.draft);
+
+  return works.map((work) => ({
+    params: { slug: work.id.trim() },
+    props: { work },
+  }));
+}
+
+const { work } = Astro.props;
+const { Content } = await render(work);
+
+const slug = work.id.trim().toLowerCase();
+const isGallery = work.data.type === 'gallery';
+
+const englishSummary = work.data.summary_en?.trim();
+
+const descriptions = work.data.description ?? [];
+
+const workImages = mediaManifest.filter((image) =>
+  image.path.toLowerCase().startsWith(`work/${slug}/`)
+);
+
+const isCover = (path) => {
+  const fileName = path.split('/').pop().toLowerCase();
+
+  return [
+    'cover.jpg',
+    'cover.jpeg',
+    'cover.png',
+    'cover.webp',
+  ].includes(fileName);
+};
+
+const galleryImages = workImages
+  .filter((image) => isGallery || !isCover(image.path))
+  .sort((a, b) =>
+    a.path.localeCompare(b.path, undefined, { numeric: true })
+  )
+  .map((image) => ({
+    ...image,
+    url: mediaUrl(image.path),
+  }));
+
+const sliderImages = galleryImages;
+
+function getMarkdownImage(props) {
+  const rawSrc =
+    typeof props.src === 'string'
+      ? props.src
+      : props.src?.src ?? '';
+
+  const normalizedSrc = decodeURIComponent(
+    rawSrc.split(/[?#]/)[0]
+  ).replace(/\\/g, '/');
+
+  const workPrefix = `work/${slug}/`;
+
+  const relativeSrc = normalizedSrc
+    .replace(/^\/+/, '')
+    .replace(/^.*\/work\//i, 'work/');
+
+  const image = workImages.find((item) => {
+    const normalizedPath = item.path.toLowerCase();
+    const normalizedRelativeSrc = relativeSrc.toLowerCase();
+
+    if (normalizedRelativeSrc.startsWith(workPrefix)) {
+      return normalizedPath === normalizedRelativeSrc;
+    }
+
+    const filename = normalizedRelativeSrc.split('/').pop();
+
+    return normalizedPath.endsWith(`/${filename}`);
+  });
+
+  if (!image) {
+    throw new Error(
+      `Imagen no encontrada en el manifiesto del proyecto "${slug}": ${rawSrc}`
+    );
+  }
+
+  return {
+    src: mediaUrl(image.path),
+    width: image.width,
+    height: image.height,
+  };
+}
+---
+
+<BaseLayout
+  title={`${work.data.title} | Marta Rodriguez Palau`}
+  description={descriptions.join(' ')}
+>
+  {isGallery ? (
+    <div class="site-container gallery-page">
+      <header class="selected-header">
+        <h1>{work.data.title}</h1>
+      </header>
+
+      <div
+        id="work-gallery-container"
+        class="work-gallery-container"
+      >
+        <div
+          id="pure-work-gallery"
+          class="justified-grid justified-gallery"
+          data-pswp-active="true"
+        >
+          {galleryImages.map((image) => (
+            <a
+              href={image.url}
+              class="grid-item gallery-item"
+              data-pswp-width={image.width}
+              data-pswp-height={image.height}
+            >
+              <img
+                src={image.url}
+                alt={work.data.title}
+                width={image.width}
+                height={image.height}
+                loading="lazy"
+              />
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div class="work-detail-page">
+      <div
+        id="work-gallery-container"
+        class="work-gallery-container"
+      >
+        <div
+          id="slider-container"
+          class="slider-container"
+          data-pswp-active="true"
+        >
+          <div class="slider-track">
+            {sliderImages.map((image, index) => (
+              <a
+                href={image.url}
+                class="slider-item"
+                data-pswp-width={image.width}
+                data-pswp-height={image.height}
+                data-pswp-target={`image-${index}`}
+              >
+                <img
+                  src={image.url}
+                  alt={`${work.data.title} — ${index + 1}`}
+                  width={image.width}
+                  height={image.height}
+                  loading="lazy"
+                />
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div
+          id="mosaic-container"
+          class="mosaic-container"
+          data-pswp-active="false"
+          style="display: none;"
+        >
+          <div
+            id="work-mosaic-gallery"
+            class="justified-grid justified-gallery"
+          >
+            {sliderImages.map((image, index) => (
+              <a
+                href={image.url}
+                class="grid-item gallery-item"
+                data-pswp-width={image.width}
+                data-pswp-height={image.height}
+                data-pswp-target={`image-${index}`}
+              >
+                <img
+                  src={image.url}
+                  alt={`${work.data.title} — ${index + 1}`}
+                  width={image.width}
+                  height={image.height}
+                  loading="lazy"
+                />
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div class="site-container work-layout">
+        <aside class="work-sidebar">
+          <div class="work-sidebar-inner">
+            <h1>{work.data.title}</h1>
+
+            <div class="view-controls">
+              <button
+                id="view-slider"
+                class="view-button active"
+                type="button"
+                aria-label="Vista carrusel"
+                aria-pressed="true"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3" y="4" width="18" height="16" rx="1" />
+                  <path d="M7 4v16M17 4v16" />
+                </svg>
+              </button>
+
+              <button
+                id="view-mosaic"
+                class="view-button"
+                type="button"
+                aria-label="Vista mosaico"
+                aria-pressed="false"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3" y="3" width="8" height="8" />
+                  <rect x="13" y="3" width="8" height="5" />
+                  <rect x="13" y="10" width="8" height="11" />
+                  <rect x="3" y="13" width="8" height="8" />
+                </svg>
+              </button>
+            </div>
+
+            {work.data.date && (
+              <p class="work-year">
+                {work.data.date.getFullYear()}
+              </p>
+            )}
+
+            {work.data.tags?.length > 0 && (
+              <Tags tags={work.data.tags} />
+            )}
+
+            <Expos cv={work.data.cv} />
+
+            {englishSummary && (
+              <Disclosure
+                title={t('englishSummary')}
+                content={englishSummary}
+              />
+            )}
+          </div>
+        </aside>
+
+        <main class="work-main">
+          {descriptions.length > 0 && (
+            <div class="work-description">
+              {descriptions.map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+            </div>
+          )}
+
+          <div class="work-content prose">
+            <Content
+              components={{
+                img: (props) => {
+                  const image = getMarkdownImage(props);
+
+                  return (
+                    <img
+                      src={image.src}
+                      alt={props.alt ?? ''}
+                      width={image.width}
+                      height={image.height}
+                      loading="lazy"
+                    />
+                  );
+                },
+              }}
+            />
+          </div>
+        </main>
+      </div>
+    </div>
+  )}
+</BaseLayout>
+
+<style>
+  .gallery-page {
+    padding-top: 0;
+    padding-bottom: 4rem;
+  }
+
+  .selected-header {
+    margin-bottom: 2rem;
+  }
+
+  .work-gallery-container {
+    width: 100%;
+    position: relative;
+  }
+
+  .slider-container {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .slider-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .slider-track {
+    display: flex;
+    width: max-content;
+    min-width: 100%;
+    height: min(72vh, 760px);
+    gap: 8px;
+    padding: 0 8px;
+  }
+
+  .slider-item {
+    display: block;
+    height: 100%;
+    flex: 0 0 auto;
+    overflow: hidden;
+  }
+
+  .slider-item img {
+    display: block;
+    width: auto;
+    height: 100%;
+    max-width: none;
+    object-fit: contain;
+  }
+
+  .mosaic-container {
+    width: 100%;
+    padding: 0 8px;
+  }
+
+  .justified-gallery {
+    width: 100%;
+  }
+
+  .work-layout {
+    display: grid;
+    grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 5rem);
+    padding-top: 3rem;
+    padding-bottom: 5rem;
+  }
+
+  .work-sidebar {
+    min-width: 0;
+  }
+
+  .work-sidebar-inner {
+    position: sticky;
+    top: 100px;
+  }
+
+  .work-sidebar h1 {
+    margin-top: 0;
+    margin-bottom: 1.25rem;
+  }
+
+  .view-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .view-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem;
+    border: 0;
+    background: transparent;
+    color: var(--text-2);
+    cursor: pointer;
+    opacity: 0.55;
+    transition: opacity 180ms ease;
+  }
+
+  .view-button:hover,
+  .view-button.active {
+    opacity: 1;
+    color: var(--text-1);
+  }
+
+  .work-year {
+    margin: 0 0 1.25rem;
+    color: var(--text-2);
+  }
+
+  .work-description {
+    margin-bottom: 2rem;
+  }
+
+  .work-description p {
+    margin: 0 0 1rem;
+  }
+
+  .work-content {
+    min-width: 0;
+  }
+
+  .work-content img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: 800px) {
+    .work-layout {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding-top: 2rem;
+    }
+
+    .work-sidebar-inner {
+      position: static;
+    }
+
+    .slider-track {
+      height: 55vh;
+    }
+  }
+</style>
+
+<script>
+  import { initJustifiedGallery } from '../../scripts/gallery.js';
+
+  let cleanupGallery = null;
+
+  function initGallery() {
+    cleanupGallery?.();
+    cleanupGallery = null;
+
+    const gallery = document.getElementById('pure-work-gallery');
+
+    if (!gallery) return;
+
+    cleanupGallery = initJustifiedGallery(gallery, {
+      itemSelector: '.gallery-item',
+      targetRowHeight: 288,
+      spacing: 8,
+      heightTolerance: 0.25,
+    });
+  }
+
+  function setActiveView(isMosaic) {
+    const slider = document.getElementById('slider-container');
+    const mosaic = document.getElementById('mosaic-container');
+    const sliderButton = document.getElementById('view-slider');
+    const mosaicButton = document.getElementById('view-mosaic');
+
+    if (!slider || !mosaic || !sliderButton || !mosaicButton) return;
+
+    slider.style.display = isMosaic ? 'none' : '';
+    mosaic.style.display = isMosaic ? '' : 'none';
+
+    slider.dataset.pswpActive = String(!isMosaic);
+    mosaic.dataset.pswpActive = String(isMosaic);
+
+    sliderButton.classList.toggle('active', !isMosaic);
+    mosaicButton.classList.toggle('active', isMosaic);
+
+    sliderButton.setAttribute('aria-pressed', String(!isMosaic));
+    mosaicButton.setAttribute('aria-pressed', String(isMosaic));
+
+    if (isMosaic) {
+      const gallery = document.getElementById('work-mosaic-gallery');
+
+      if (gallery && !gallery.dataset.initialized) {
+        gallery.dataset.initialized = 'true';
+
+        cleanupGallery?.();
+        cleanupGallery = initJustifiedGallery(gallery, {
+          itemSelector: '.gallery-item',
+          targetRowHeight: 288,
+          spacing: 8,
+          heightTolerance: 0.25,
+        });
+      }
+    }
+  }
+
+  function initWorkGallery() {
+    const pureGallery = document.getElementById('pure-work-gallery');
+
+    if (pureGallery) {
+      initGallery();
+      return;
+    }
+
+    const sliderButton = document.getElementById('view-slider');
+    const mosaicButton = document.getElementById('view-mosaic');
+
+    if (!sliderButton || !mosaicButton) return;
+
+    sliderButton.addEventListener('click', () => {
+      setActiveView(false);
+    });
+
+    mosaicButton.addEventListener('click', () => {
+      setActiveView(true);
+    });
+
+    setActiveView(false);
+  }
+
+  function cleanupWorkGallery() {
+    cleanupGallery?.();
+    cleanupGallery = null;
+  }
+
+  document.addEventListener('astro:before-swap', cleanupWorkGallery);
+  document.addEventListener('astro:page-load', initWorkGallery);
+
+  initWorkGallery();
+</script>

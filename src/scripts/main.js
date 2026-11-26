@@ -5,10 +5,12 @@ import "./lightbox.js";
 // 1. ESTADO COMPARTIDO
 // =========================================
 
+const HEADER_SHOW_THRESHOLD = 100;
+
 let lastScrollY = window.scrollY;
 
 // =========================================
-// 2. FUNCIONES DEL MENÚ
+// 2. ESTADO DEL MENÚ
 // =========================================
 
 const setMenuState = (isOpen) => {
@@ -18,6 +20,7 @@ const setMenuState = (isOpen) => {
   if (!header || !button) return;
 
   header.classList.toggle("menu-open", isOpen);
+
   button.setAttribute("aria-expanded", String(isOpen));
   button.setAttribute(
     "aria-label",
@@ -26,7 +29,29 @@ const setMenuState = (isOpen) => {
 };
 
 // =========================================
-// 3. MENÚ MÓVIL
+// 3. VISIBILIDAD DEL HEADER
+// =========================================
+
+const updateHeaderVisibility = () => {
+  const header = document.getElementById("main-header");
+
+  if (!header) return;
+
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+  if (isMobile) {
+    header.classList.toggle("header-hidden", window.scrollY > 0);
+    return;
+  }
+
+  header.classList.toggle(
+    "header-hidden",
+    window.scrollY > HEADER_SHOW_THRESHOLD
+  );
+};
+
+// =========================================
+// 4. MENÚ MÓVIL
 // =========================================
 
 document.addEventListener("click", (event) => {
@@ -45,7 +70,6 @@ document.addEventListener("click", (event) => {
     return;
   }
 
-  // Cerrar el menú al seleccionar un enlace.
   const menuLink = target.closest("#menu a");
 
   if (menuLink) {
@@ -54,37 +78,73 @@ document.addEventListener("click", (event) => {
 });
 
 // =========================================
-// 4. SCROLL: MENÚ Y HEADER
+// 5. SCROLL: MENÚ Y HEADER
 // =========================================
 
 window.addEventListener(
   "scroll",
   () => {
+    const currentScrollY = window.scrollY;
+    const scrollingDown = currentScrollY > lastScrollY;
+
     const header = document.getElementById("main-header");
 
     if (!header) return;
 
-    const scrollingDown = window.scrollY > lastScrollY;
-
-    // Cerrar el menú al desplazarse hacia abajo.
     if (scrollingDown && header.classList.contains("menu-open")) {
       setMenuState(false);
     }
 
-    // Ocultar al bajar y mostrar al subir.
-    if (scrollingDown && window.scrollY > 100) {
-      header.classList.add("header-hidden");
-    } else {
-      header.classList.remove("header-hidden");
-    }
+    updateHeaderVisibility();
 
-    lastScrollY = window.scrollY;
+    lastScrollY = currentScrollY;
   },
   { passive: true }
 );
 
 // =========================================
-// 5. REINICIAR ESTADO EN CADA NAVEGACIÓN
+// 6. CARGA SUAVE DE IMÁGENES
+// =========================================
+
+const initImageLoading = () => {
+  const images = document.querySelectorAll(
+    "img:not(.pswp__item img)"
+  );
+
+  images.forEach((img) => {
+    if (img.dataset.loadingInitialized === "true") return;
+
+    img.dataset.loadingInitialized = "true";
+
+    if (img.complete) {
+      img.dataset.loading =
+        img.naturalWidth > 0 ? "loaded" : "error";
+
+      return;
+    }
+
+    img.dataset.loading = "true";
+
+    img.addEventListener(
+      "load",
+      () => {
+        img.dataset.loading = "loaded";
+      },
+      { once: true }
+    );
+
+    img.addEventListener(
+      "error",
+      () => {
+        img.dataset.loading = "error";
+      },
+      { once: true }
+    );
+  });
+};
+
+// =========================================
+// 7. REINICIAR ESTADO EN CADA NAVEGACIÓN
 // =========================================
 
 document.addEventListener("astro:page-load", () => {
@@ -92,12 +152,17 @@ document.addEventListener("astro:page-load", () => {
 
   lastScrollY = window.scrollY;
 
-  const header = document.getElementById("main-header");
-  header?.classList.remove("header-hidden");
+  updateHeaderVisibility();
+
+  initImageLoading();
 });
 
+// Primera carga de la página.
+updateHeaderVisibility();
+initImageLoading();
+
 // =========================================
-// 6. PROTECCIÓN DE IMÁGENES
+// 8. PROTECCIÓN DE IMÁGENES
 // =========================================
 
 const isImageTarget = (target) => {
@@ -110,7 +175,6 @@ const isImageTarget = (target) => {
   return Boolean(link?.querySelector("img"));
 };
 
-// Bloquear menú contextual sobre imágenes y sus enlaces.
 document.addEventListener(
   "contextmenu",
   (event) => {
@@ -121,7 +185,6 @@ document.addEventListener(
   true
 );
 
-// Bloquear arrastre sobre imágenes y sus enlaces.
 document.addEventListener(
   "dragstart",
   (event) => {

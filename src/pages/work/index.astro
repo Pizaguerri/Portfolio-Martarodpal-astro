@@ -1,0 +1,108 @@
+
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import mediaManifest from '../../data/media-manifest.json';
+import { getProjectsWithCovers } from '../../utils/projects.js';
+
+const projects = await getCollection(
+  'work',
+  ({ data }) => !data.draft
+);
+
+const projectsWithImages = getProjectsWithCovers(
+  projects,
+  mediaManifest
+);
+---
+
+<BaseLayout title="Projectes | Marta Rodriguez Palau">
+  <div class="site-container" style="padding-top: 0; padding-bottom: 4rem;">
+
+    <header class="selected-header">
+      <h1>Projectes</h1>
+    </header>
+
+    <div
+      id="projects-index-gallery"
+      class="justified-grid justified-gallery"
+    >
+      {projectsWithImages.map((project) => (
+        <a
+          href={`/work/${project.slug}`}
+          class="grid-item gallery-item"
+          aria-label={`Veure el projecte ${project.data.title}`}
+        >
+          <img
+            src={project.image.src}
+            alt={project.data.title}
+            width={project.image.width}
+            height={project.image.height}
+            loading="lazy"
+          />
+        </a>
+      ))}
+    </div>
+
+  </div>
+</BaseLayout>
+
+<script>
+  import { initJustifiedGallery } from '../../scripts/gallery.js';
+
+  let cleanupGallery = null;
+
+  function initGallery() {
+    cleanupGallery?.();
+    cleanupGallery = null;
+
+    const gallery = document.getElementById('projects-index-gallery');
+
+    if (!gallery) return;
+
+    cleanupGallery = initJustifiedGallery(gallery, {
+      itemSelector: '.gallery-item',
+      targetRowHeight: 288,
+      spacing: 8,
+      heightTolerance: 0.25,
+    });
+  }
+
+  document.addEventListener('astro:before-swap', () => {
+    cleanupGallery?.();
+    cleanupGallery = null;
+  });
+
+  document.addEventListener('astro:page-load', initGallery);
+
+  initGallery();
+</script>
+
+<style is:global>
+  .justified-gallery {
+    position: relative;
+    width: 100%;
+  }
+
+  .justified-gallery .gallery-item {
+    display: block;
+    cursor: pointer;
+    text-decoration: none;
+    overflow: hidden;
+    background-color: var(--surface-2);
+  }
+
+  .justified-gallery .gallery-item img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: filter 0.3s ease;
+  }
+
+  @media (hover: hover) {
+    .justified-gallery .gallery-item:hover img {
+      filter: grayscale(100%);
+    }
+  }
+</style>

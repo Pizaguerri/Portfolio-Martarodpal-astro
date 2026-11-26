@@ -1,43 +1,40 @@
+
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
 
 export async function GET(context) {
-  // 1. Traemos los posts del blog (Editorial)
-  const blogPosts = await getCollection('blog');
-  
-  // 2. Traemos los proyectos
-  const projects = await getCollection('projects');
+  // Obtener los proyectos y galerías.
+  const work = await getCollection('work');
 
-  // 3. Los unimos todos en un solo array
-  const allItems = [...blogPosts, ...projects];
-
-  // 4. Filtramos para que solo salgan los que están en catalán (o el idioma que quieras)
-  // y que no sean borradores (draft: false)
-  const publishedItems = allItems.filter(item => 
-    item.id.endsWith('.ca') && !item.data.draft
+  // Excluir borradores y contenidos sin fecha.
+  const publishedItems = work.filter(
+    (item) =>
+      !item.data.draft &&
+      item.data.date instanceof Date &&
+      item.data.type !== 'gallery'
   );
 
-  // 5. Mapeamos cada item al formato que espera el RSS
-  const rssItems = publishedItems.map(item => ({
+  // Convertir los contenidos al formato RSS.
+  const rssItems = publishedItems.map((item) => ({
     title: item.data.title,
-    description: item.data.description || item.data.summary || '',
+    description: Array.isArray(item.data.description)
+      ? item.data.description.join(' ')
+      : item.data.description || '',
     pubDate: item.data.date,
-    // Creamos el enlace según si es un proyecto o un post
-    link: item.collection === 'projects' 
-      ? `/proyectos/${item.id.replace('.ca', '')}` 
-      : `/blog/${item.id.replace('.ca', '')}`,
+    link: `/work/${item.id}`,
   }));
 
-  // 6. Ordenamos por fecha (del más nuevo al más antiguo)
-  rssItems.sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf());
+  // Ordenar cronológicamente, del más reciente al más antiguo.
+  rssItems.sort(
+    (a, b) => b.pubDate.valueOf() - a.pubDate.valueOf()
+  );
 
-  // 7. Generamos el feed
+  // Generar el feed RSS.
   return rss({
     title: 'Marta Rodriguez Palau',
-    description: 'Portfolio de Marta Rodriguez Palau',
+    description: 'Portfolio de fotografía de Marta Rodriguez Palau',
     site: context.site,
     items: rssItems,
-    // Añadimos el idioma para que los lectores lo detecten bien
-    customData: `<language>ca-ES</language>`,
+    customData: '<language>ca-ES</language>',
   });
 }

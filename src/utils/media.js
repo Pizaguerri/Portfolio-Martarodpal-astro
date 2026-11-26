@@ -1,0 +1,18 @@
+const MEDIA_BASE_URL = 'https://media.martarodriguezpalau.org';
+
+/**
+ * Construye la URL pública de una imagen almacenada en R2.
+ *
+ * Ejemplo:
+ * mediaUrl('work/BarcelonaExperience/cover.jpg')
+ */
+export function mediaUrl(path) {
+  const normalizedPath = String(path).replace(/^\/+/, '');
+
+  const encodedPath = normalizedPath
+    .split('/')
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+
+  return `${MEDIA_BASE_URL}/${encodedPath}`;
+}

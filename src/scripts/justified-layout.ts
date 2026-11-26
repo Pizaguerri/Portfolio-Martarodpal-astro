@@ -23,7 +23,6 @@ interface LayoutBox {
 /**
  * Row
  * Wrapper for each row in a justified layout.
- * Stores relevant values and provides methods for calculating layout of individual rows.
  */
 class Row {
   top: number;
@@ -45,10 +44,12 @@ class Row {
     this.heightTolerance = params.heightTolerance;
 
     this.minAspectRatio =
-      (this.rowWidth / params.rowHeight) * (1 - params.heightTolerance);
+      (this.rowWidth / params.rowHeight) *
+      (1 - params.heightTolerance);
 
     this.maxAspectRatio =
-      (this.rowWidth / params.rowHeight) * (1 + params.heightTolerance);
+      (this.rowWidth / params.rowHeight) *
+      (1 + params.heightTolerance);
   }
 
   /**
@@ -66,7 +67,8 @@ class Row {
       0,
     );
 
-    const targetAspectRatio = rowWidthWithoutSpacing / this.rowHeight;
+    const targetAspectRatio =
+      rowWidthWithoutSpacing / this.rowHeight;
 
     if (newAspectRatio < this.minAspectRatio) {
       this.items.push(itemData);
@@ -98,31 +100,42 @@ class Row {
         this.completeLayout(
           previousRowWidthWithoutSpacing / previousAspectRatio,
         );
+
         return false;
       }
 
       this.items.push(itemData);
       this.completeLayout(rowWidthWithoutSpacing / newAspectRatio);
+
       return true;
     }
 
     this.items.push(itemData);
     this.completeLayout(rowWidthWithoutSpacing / newAspectRatio);
+
     return true;
   }
 
   /**
-   * Set row height and compute item geometry.
-   *
-   * Each item's width is calculated from its original aspect ratio.
-   * If the row height is clamped, unused horizontal space may remain.
-   * Images are never stretched to fill the row.
+   * Set row height and compute item geometry from that height.
    */
   completeLayout(newHeight: number) {
+    if (!this.items.length || !Number.isFinite(newHeight) || newHeight <= 0) {
+      return;
+    }
+
+    const rowWidthWithoutSpacing =
+      this.rowWidth - (this.items.length - 1) * this.spacing;
+
     const clampedHeight = Math.max(
       0.5 * this.rowHeight,
       Math.min(newHeight, 2 * this.rowHeight),
     );
+
+    const clampedToNativeRatio =
+      newHeight !== clampedHeight
+        ? newHeight / clampedHeight
+        : 1;
 
     this.height = clampedHeight;
 
@@ -130,7 +143,11 @@ class Row {
 
     for (const item of this.items) {
       item.top = this.top;
-      item.width = item.aspectRatio * this.height;
+      item.width =
+        item.aspectRatio *
+        this.height *
+        clampedToNativeRatio;
+
       item.height = this.height;
       item.left = itemWidthSum;
 
@@ -147,12 +164,47 @@ export default function (
   aspectRatios: number[],
   layoutOptions: LayoutOptions,
 ) {
+  const {
+    rowWidth,
+    rowHeight,
+    spacing,
+    heightTolerance,
+  } = layoutOptions;
+
+  if (
+    !Number.isFinite(rowWidth) ||
+    !Number.isFinite(rowHeight) ||
+    rowWidth <= 0 ||
+    rowHeight <= 0 ||
+    !Number.isFinite(spacing) ||
+    spacing < 0 ||
+    !Number.isFinite(heightTolerance) ||
+    heightTolerance < 0 ||
+    heightTolerance >= 1
+  ) {
+    return {
+      containerHeight: 0,
+      boxes: [],
+    };
+  }
+
+  const validAspectRatios = aspectRatios.filter(
+    (ratio) => Number.isFinite(ratio) && ratio > 0,
+  );
+
+  if (!validAspectRatios.length) {
+    return {
+      containerHeight: 0,
+      boxes: [],
+    };
+  }
+
   let containerHeight = 0;
   let boxes: LayoutBox[] = [];
   let currentRow: Row | undefined;
-  let lastRowHeight = 0;
+  let lastRowHeight = rowHeight;
 
-  for (const aspectRatio of aspectRatios) {
+  for (const aspectRatio of validAspectRatios) {
     if (!currentRow) {
       currentRow = new Row({
         top: containerHeight,
@@ -164,8 +216,11 @@ export default function (
 
     if (currentRow.height > 0) {
       lastRowHeight = currentRow.height;
+
       boxes = boxes.concat(currentRow.items);
-      containerHeight += currentRow.height + layoutOptions.spacing;
+
+      containerHeight +=
+        currentRow.height + spacing;
 
       currentRow = new Row({
         top: containerHeight,
@@ -177,8 +232,11 @@ export default function (
 
         if (currentRow.height > 0) {
           lastRowHeight = currentRow.height;
+
           boxes = boxes.concat(currentRow.items);
-          containerHeight += currentRow.height + layoutOptions.spacing;
+
+          containerHeight +=
+            currentRow.height + spacing;
 
           currentRow = new Row({
             top: containerHeight,
@@ -189,13 +247,14 @@ export default function (
     }
   }
 
+  // Última fila: conserva una altura visual coherente.
   if (currentRow && currentRow.items.length) {
-    currentRow.completeLayout(lastRowHeight || layoutOptions.rowHeight);
-    boxes = boxes.concat(currentRow.items);
-    containerHeight += currentRow.height + layoutOptions.spacing;
-  }
+    currentRow.completeLayout(lastRowHeight);
 
-  containerHeight -= layoutOptions.spacing;
+    boxes = boxes.concat(currentRow.items);
+
+    containerHeight += currentRow.height;
+  }
 
   return {
     containerHeight: Math.max(0, containerHeight),

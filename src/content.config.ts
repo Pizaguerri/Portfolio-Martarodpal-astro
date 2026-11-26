@@ -9,17 +9,19 @@ const cvSchema = z.object({
   premis: z.array(z.string()).optional().default([]),
 });
 
-// Campos comunes de proyectos y contenido editorial
+// Campos comunes de proyectos y galerías
 const portfolioSchema = z.object({
   title: z.string(),
-  description: z.string().optional(),
+  description: z.array(z.string()).optional().default([]),
   date: z.coerce.date().optional(),
+  type: z.enum(['project', 'gallery']).default('project'),
+  cover: z.string().optional(),
   tags: z.array(z.string()).optional().default([]),
   summary_en: z.string().optional(),
   draft: z.boolean().optional().default(false),
 });
 
-// Proyectos con información curricular
+// Proyectos y galerías con información curricular
 const portfolioWithCvSchema = portfolioSchema.extend({
   cv: cvSchema.default({
     exposicions: [],
@@ -28,33 +30,22 @@ const portfolioWithCvSchema = portfolioSchema.extend({
   }),
 });
 
-// Projects
-const projects = defineCollection({
+// Work
+const work = defineCollection({
   loader: glob({
     pattern: '**/*.md',
-    base: './src/content/projects',
+    base: './src/content/work',
     generateId: ({ entry }) =>
-      entry.replace(/\/index\.([a-z]{2})\.md$/, '.$1'),
+      entry.replace(/\/index\.md$/, ''),
   }),
   schema: portfolioWithCvSchema,
 });
 
-// Selected
-const selected = defineCollection({
-  loader: glob({
-    pattern: '**/*.md',
-    base: './src/content/selected',
-    generateId: ({ entry }) =>
-      entry.replace(/\/index\.([a-z]{2})\.md$/, '.$1'),
-  }),
-  schema: portfolioSchema,
-});
-
-// About y CV manual
-const about = defineCollection({
+// Bio y CV manual
+const bio = defineCollection({
   loader: glob({
     pattern: '*.md',
-    base: './src/content/about',
+    base: './src/content/bio',
     generateId: ({ entry }) =>
       entry.replace(/\.([a-z]{2})\.md$/, '.$1'),
   }),
@@ -67,7 +58,6 @@ const about = defineCollection({
 });
 
 export const collections = {
-  projects,
-  selected,
-  about,
+  work,
+  bio,
 };

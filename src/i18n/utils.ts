@@ -1,4 +1,4 @@
-import { ui } from './ui';
+import { ui } from '../../src/i18n/ui';
 
 export function useTranslations(lang: string) {
   return function t(key: keyof typeof ui['ca']) {

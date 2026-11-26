@@ -10,32 +10,33 @@ body {
 /* =========================================================
    HEADER
    ========================================================= */
-header {
-  position: relative;
+.site-header {
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
-  background-color: transparent;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  margin-bottom: 0;
+  background: transparent !important;
   color: var(--text-1);
+  backdrop-filter: blur(0);
+  -webkit-backdrop-filter: blur(0);
   overflow: visible !important;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-header a,
-.site-title {
+.site-header.header-hidden {
+  transform: translateY(-100%);
+}
+
+.site-header a,
+.site-header .site-title {
   color: inherit;
   text-decoration: none;
 }
 
-header a:hover {
+.site-header a:hover {
   opacity: 0.9;
-}
-
-.site-header {
-  margin-bottom: 1rem;
-  background: transparent !important;
 }
 
 .header-container {
@@ -56,6 +57,8 @@ header a:hover {
   gap: 0.75rem;
   text-decoration: none;
   flex-shrink: 0;
+  position: relative;
+  z-index: 1060;
 }
 
 .site-logo {
@@ -113,7 +116,7 @@ header a:hover {
   font-weight: 700;
 }
 
-/* Botón hamburguesa / más */
+/* Botón de menú */
 .menu-toggle-btn {
   display: none;
   flex: 0 0 auto;
@@ -154,9 +157,7 @@ header a:hover {
   display: block;
 }
 
-/* =========================================================
-   MENÚ MÓVIL — NAVEGACIÓN HORIZONTAL
-   ========================================================= */
+/* Menú móvil */
 .mobile-nav {
   display: none;
 }
@@ -179,19 +180,14 @@ header a:hover {
     grid-row: 1;
     justify-self: center;
     position: relative;
-    z-index: 2;
+    z-index: 1060;
     gap: 0.75rem;
     transition: gap 0.4s ease;
   }
 
-  /* La imagen del logo permanece intacta */
+  /* La imagen permanece intacta */
   .site-logo {
     flex-shrink: 0;
-  }
-
-  .logo-link {
-    z-index: 1060;
-    position: relative;
   }
 
   /* El título se contrae al abrir el menú */
@@ -227,14 +223,15 @@ header a:hover {
     grid-row: 1;
     justify-self: end;
     margin-left: 0;
+    transform: translateX(23px);
     z-index: 1100;
   }
 
-  /* Navegación horizontal integrada */
+  /* Navegación horizontal superpuesta */
   .mobile-nav {
     display: flex;
     position: absolute;
-    right: 5rem;
+    right: calc(4.2rem - 23px);
     top: 50%;
     transform: translateY(-50%);
     width: 0;
@@ -256,7 +253,7 @@ header a:hover {
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
-    gap: clamp(0.75rem, 3vw, 1.5rem);
+    gap: clamp(1rem, 4vw, 1.75rem);
     list-style: none;
     margin: 0;
     padding: 0;
@@ -294,7 +291,6 @@ header a:hover {
     pointer-events: auto;
   }
 
-  /* El header permanece transparente al abrir */
   .site-header.menu-open {
     background: transparent !important;
   }
@@ -311,9 +307,16 @@ header a:hover {
   }
 }
 
-@media (max-width: 640px) {
-  .site-logo {
-    max-height: 32px;
+/* =========================================================
+   ESPACIO PARA EL HEADER FIJO
+   ========================================================= */
+main {
+  padding-top: 72px;
+}
+
+@media (max-width: 768px) {
+  main {
+    padding-top: 76px;
   }
 }
 
@@ -337,7 +340,6 @@ hgroup {
   z-index: 1;
 }
 
-/* Forzar que todos los títulos de sección tengan el mismo tamaño */
 .selected-header h1,
 .index-section-title {
   font-size: 1.5rem !important;
@@ -446,7 +448,7 @@ section.galleries {
   width: 100%;
   height: 300px;
   object-fit: cover;
-  border-radius: 0px;
+  border-radius: 0;
   transition: transform 0.3s ease;
 }
 
@@ -528,7 +530,7 @@ section.galleries {
 }
 
 /* =========================================================
-   GALERÍAS UNIFICADAS (Selected, Proyectos, Editorial)
+   GALERÍAS UNIFICADAS
    ========================================================= */
 .selected-header {
   display: flex;
@@ -549,14 +551,45 @@ section.galleries {
   margin: 0;
 }
 
+/*
+ * Contenedor del mosaico justificado.
+ * El motor JavaScript calcula las posiciones y alturas.
+ */
 .justified-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  align-items: start;
+  position: relative;
+  display: block;
   width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
+/*
+ * Elementos posicionados por el motor justified-layout.
+ */
+.justified-grid .gallery-item {
+  position: absolute;
+  display: block;
+  box-sizing: border-box;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Imágenes sin recorte */
+.justified-grid .gallery-item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  margin: 0;
+  object-fit: contain;
+  transition: filter 0.3s ease;
+}
+
+/* Compatibilidad con elementos grid-item */
 .grid-item {
   display: block;
   width: 100%;
@@ -564,15 +597,8 @@ section.galleries {
   cursor: pointer;
 }
 
-.grid-item img {
-  width: 100%;
-  height: auto;
-  display: block;
-  transition: filter 0.3s ease;
-}
-
 @media (min-width: 769px) {
-  .grid-item:hover img {
+  .justified-grid .gallery-item:hover img {
     filter: grayscale(100%);
   }
 
@@ -719,14 +745,9 @@ body.home footer section:last-of-type {
   }
 }
 
-img {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-/* ========== POST GALLERY — EDITORIAL MOSAIC ========== */
+/* =========================================================
+   POST GALLERY — EDITORIAL MOSAIC
+   ========================================================= */
 .post-gallery {
   width: 100%;
   margin: 5rem auto 4rem;
@@ -757,100 +778,35 @@ img {
   color: var(--text-2);
 }
 
-.post-gallery-block {
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
+/*
+ * Las antiguas reglas de bloques y columnas se eliminan:
+ * el mosaico ahora se distribuye mediante justified-layout.
+ */
 
-.post-gallery-block-left {
-  grid-template-columns: 2fr 1fr;
-}
-
-.post-gallery-block-right {
-  grid-template-columns: 1fr 2fr;
-}
-
-.post-gallery-block > .post-gallery-item.is-large {
-  grid-row: 1 / 3;
-  height: 100%;
-  min-height: 0;
-  aspect-ratio: auto;
-}
-
-.post-gallery-block-left > .post-gallery-item.is-large {
-  grid-column: 1;
-}
-
-.post-gallery-block-right > .post-gallery-item.is-large {
-  grid-column: 2;
-}
-
-.post-gallery-block > .post-gallery-item.is-small-top {
-  grid-row: 1;
-  height: 100%;
-  min-height: 0;
-  aspect-ratio: auto;
-}
-
-.post-gallery-block > .post-gallery-item.is-small-bottom {
-  grid-row: 2;
-  height: 100%;
-  min-height: 0;
-  aspect-ratio: auto;
-}
-
-.post-gallery-block-left > .post-gallery-item.is-small-top,
-.post-gallery-block-left > .post-gallery-item.is-small-bottom {
-  grid-column: 2;
-}
-
-.post-gallery-block-right > .post-gallery-item.is-small-top,
-.post-gallery-block-right > .post-gallery-item.is-small-bottom {
-  grid-column: 1;
-}
-
-.post-gallery-remainder {
-  display: grid;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.post-gallery-remainder-2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.post-gallery-remainder-1 {
-  grid-template-columns: 2fr 1fr;
-}
-
-.post-gallery-remainder-1 .post-gallery-item {
-  grid-column: 1;
-}
-
+/* Elementos de galería */
 .post-gallery-item {
-  position: relative;
+  position: absolute;
   display: block;
   min-width: 0;
   margin: 0;
   padding: 0;
   overflow: hidden;
-  aspect-ratio: 3 / 2;
-  background: var(--surface-2);
+  background: transparent;
   text-decoration: none;
   color: inherit;
 }
 
+/* La imagen conserva su proporción original */
 .post-gallery-item img {
   width: 100%;
   height: 100%;
   display: block;
   margin: 0;
-  object-fit: cover;
-  transition: transform 0.5s ease;
+  object-fit: contain;
+  transition: filter 0.3s ease;
 }
 
+/* Pie de foto */
 .post-gallery-item .pswp-caption-content {
   position: absolute;
   left: 0;
@@ -866,6 +822,7 @@ img {
   text-align: center;
   opacity: 0;
   transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
 .post-gallery-item:hover .pswp-caption-content {
@@ -886,43 +843,14 @@ img {
     margin-bottom: 1.25rem;
   }
 
-  .post-gallery-remainder,
-  .post-gallery-remainder-1,
-  .post-gallery-remainder-2 {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .post-gallery-remainder .post-gallery-item {
-    width: 100%;
-    aspect-ratio: 3 / 2;
-  }
-
-  .post-gallery-block,
-  .post-gallery-block-left,
-  .post-gallery-block-right {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .post-gallery-block > .post-gallery-item {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 3 / 2;
-  }
-
   .post-gallery-item .pswp-caption-content {
     opacity: 1;
   }
 }
 
-/* ---------------------------------
+/* =========================================================
    PRINT
-   --------------------------------- */
+   ========================================================= */
 .print-request-button {
   display: flex;
   align-items: center;
@@ -1040,9 +968,6 @@ img {
   transform: translateY(-50%) scale(1.1);
 }
 
-/* =========================================================
-   LIGHTBOX — AJUSTES MÓVILES
-   ========================================================= */
 @media (max-width: 768px) {
   .pswp__button--custom-prev-arrow,
   .pswp__button--custom-next-arrow {
@@ -1058,5 +983,28 @@ img {
 
   .pswp__button--custom-next-arrow {
     right: 0.5rem;
+  }
+}
+
+
+
+/* =========================================
+   IMAGE LOADING — TRANSICIÓN SUAVE
+   ========================================= */
+
+img[data-loading="true"] {
+  opacity: 0;
+}
+
+img[data-loading="loaded"] {
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  img[data-loading="true"],
+  img[data-loading="loaded"] {
+    opacity: 1;
+    transition: none;
   }
 }

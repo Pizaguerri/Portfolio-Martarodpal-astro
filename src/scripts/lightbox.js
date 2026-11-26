@@ -10,19 +10,13 @@ let lightbox = null;
 let isNavigating = false;
 
 const gallerySelector =
-  "#project-gallery-container, #post-gallery";
+  "#work-gallery-container, #project-gallery-container, #post-gallery";
 
-// En proyectos solo se incluyen las imágenes
-// pertenecientes a la vista activa.
 const projectImageSelector =
   '[data-pswp-active="true"] a[data-pswp-width]';
 
-// En galerías editoriales se incluyen todos
-// los elementos de imagen.
 const editorialImageSelector = ".post-gallery-item";
 
-// Evita registrar varias veces los eventos
-// sobre una misma imagen de PhotoSwipe.
 const protectedImages = new WeakSet();
 
 // =========================================
@@ -71,6 +65,7 @@ function initLightbox() {
   if (!gallery) return;
 
   const isProjectGallery =
+    gallery.id === "work-gallery-container" ||
     gallery.id === "project-gallery-container";
 
   const imageSelector = isProjectGallery

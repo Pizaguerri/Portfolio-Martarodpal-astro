@@ -1,8 +1,10 @@
+
 ---
 import "../styles/main.scss";
 import { AstroAnimations } from 'astro-animations';
 import { ClientRouter } from 'astro:transitions';
 import { useTranslations } from '../i18n/utils';
+import Footer from '../components/Footer.astro';
 
 export interface Props {
     title: string;
@@ -17,7 +19,6 @@ const {
 } = Astro.props;
 
 const t = useTranslations(lang);
-const isAboutPage = Astro.url.pathname.startsWith('/about');
 ---
 
 <!doctype html>
@@ -27,10 +28,19 @@ const isAboutPage = Astro.url.pathname.startsWith('/about');
         <meta name="description" content={description} />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{title}</title>
-        <link rel="alternate" type="application/rss+xml" title="Marta Rodriguez Palau" href="/rss.xml" />
+        <link
+            rel="alternate"
+            type="application/rss+xml"
+            title="Marta Rodriguez Palau"
+            href="/rss.xml"
+        />
         <ClientRouter />
 
         <style is:global>
+            /* =========================================
+               CONTENEDOR MAESTRO
+               ========================================= */
+
             .site-container {
                 width: 100%;
                 max-width: 1400px;
@@ -78,14 +88,23 @@ const isAboutPage = Astro.url.pathname.startsWith('/about');
                 display: block;
             }
 
+            /* =========================================
+               HEADER
+               ========================================= */
+
             #main-header {
                 transition: transform 0.3s ease-in-out;
                 z-index: 1000 !important;
+                view-transition-name: site-header;
             }
 
             #main-header.header-hidden {
                 transform: translateY(-100%);
             }
+
+            /* =========================================
+               ELEMENTOS GENERALES
+               ========================================= */
 
             .card,
             .card figure,
@@ -110,110 +129,13 @@ const isAboutPage = Astro.url.pathname.startsWith('/about');
                 }
             }
 
-            footer {
-                margin-top: 2rem;
-                border-top: 1px solid var(--border);
-                padding-top: 2rem;
-            }
-
-            .footer-grid {
-                display: flex;
-                flex-direction: column;
-                gap: 1rem;
-                width: 100%;
-                max-width: 900px;
-                margin: 0 auto;
-            }
-
-            .footer-col {
-                display: flex;
-                flex-direction: row;
-                align-items: flex-start;
-                width: 100%;
-                padding-bottom: 0.5rem;
-            }
-
-            .footer-col h4 {
-                flex: 0 0 150px;
-                font-size: 0.75rem;
-                font-weight: 500;
-                letter-spacing: 0.1em;
-                color: var(--text-2);
-                margin: 0;
-                padding-top: 0.1rem;
-            }
-
-            .footer-col ul {
-                display: flex;
-                flex-direction: row;
-                flex-wrap: nowrap;
-                gap: 1rem;
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
-
-            .footer-col li {
-                margin-bottom: 0;
-            }
-
-            .footer-col a {
-                text-decoration: none;
-                color: var(--text-1);
-                font-size: 0.9rem;
-                transition: opacity 0.2s ease;
-                white-space: nowrap;
-            }
-
-            .footer-col a:hover {
-                opacity: 0.6;
-            }
-
-            .language-switcher a.active {
-                font-weight: 700;
-                text-decoration: underline;
-            }
-
-            .footer-bottom {
-                font-size: 0.85rem;
-                color: var(--text-2);
-                padding-top: 2rem;
-                text-align: center;
-            }
-
-            @media (max-width: 768px) {
-                .footer-col {
-                    flex-direction: column;
-                    gap: 1rem;
-                }
-
-                .footer-col h4 {
-                    flex: none;
-                }
-
-                .footer-col ul {
-                    flex-direction: row;
-                    flex-wrap: wrap;
-                    gap: 0.5rem 1.5rem;
-                    width: 100%;
-                }
-
-                .footer-col li {
-                    flex: 0 0 calc(33% - 1.5rem);
-                }
-
-                .footer-bottom {
-                    padding-top: 2rem;
-                }
-            }
+            /* =========================================
+               TRANSICIONES DE PÁGINA
+               ========================================= */
 
             ::view-transition-group(root),
             ::view-transition-group(main) {
                 animation: none !important;
-            }
-
-            #main-header {
-                view-transition-name: site-header;
             }
 
             ::view-transition-old(site-header) {
@@ -238,6 +160,7 @@ const isAboutPage = Astro.url.pathname.startsWith('/about');
                 from {
                     opacity: 0;
                 }
+
                 to {
                     opacity: 1;
                 }
@@ -260,21 +183,25 @@ const isAboutPage = Astro.url.pathname.startsWith('/about');
         <header class="site-header" id="main-header">
             <div class="header-container site-container">
                 <a href="/" class="logo-link">
-                    <img src="/images/logo.png" alt="Marta Rodriguez Palau" class="site-logo" />
+                    <img
+                        src="/images/logo.png"
+                        alt="Marta Rodriguez Palau"
+                        class="site-logo"
+                    />
                     <span class="site-title">marta rodriguez palau</span>
                 </a>
 
                 <nav class="main-nav">
                     <ul>
-                        <li><a href="/indice">{t('nav.index')}</a></li>
-                        <li><a href="/about">{t('nav.about')}</a></li>
+                        <li><a href="/archive/">{t('nav.index')}</a></li>
+                        <li><a href="/bio/">{t('nav.about')}</a></li>
                     </ul>
                 </nav>
 
                 <nav id="menu" class="mobile-nav" aria-label={t('menu')}>
                     <ul>
-                        <li><a href="/indice">{t('nav.index')}</a></li>
-                        <li><a href="/about">{t('nav.about')}</a></li>
+                        <li><a href="/archive/">{t('nav.index')}</a></li>
+                        <li><a href="/bio/">{t('nav.about')}</a></li>
                     </ul>
                 </nav>
 
@@ -286,12 +213,28 @@ const isAboutPage = Astro.url.pathname.startsWith('/about');
                     aria-controls="menu"
                     type="button"
                 >
-                    <svg class="icon-open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <svg
+                        class="icon-open"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                    >
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
 
-                    <svg class="icon-close" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <svg
+                        class="icon-close"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                    >
                         <line x1="5" y1="5" x2="19" y2="19"></line>
                         <line x1="19" y1="5" x2="5" y2="19"></line>
                     </svg>
@@ -303,46 +246,7 @@ const isAboutPage = Astro.url.pathname.startsWith('/about');
             <slot />
         </main>
 
-        <footer>
-            <div class="site-container" style="padding-bottom: 4rem;">
-                <div class="footer-grid">
-                    {isAboutPage && (
-                        <div class="footer-col">
-                            <h4>{t('footer.lang')}</h4>
-                            <ul class="language-switcher" id="language-switcher">
-                                <li><a href="/about" data-lang="ca" class={lang === 'ca' ? 'active' : ''}>CA</a></li>
-                                <li><a href="/about/es" data-lang="es" class={lang === 'es' ? 'active' : ''}>ES</a></li>
-                                <li><a href="/about/en" data-lang="en" class={lang === 'en' ? 'active' : ''}>EN</a></li>
-                            </ul>
-                        </div>
-                    )}
-
-                    <div class="footer-col">
-                        <h4>{t('footer.index')}</h4>
-                        <ul>
-                            <li><a href="/indice">{t('nav.home')}</a></li>
-                            <li><a href="/proyectos">{t('nav.projects')}</a></li>
-                            <li><a href="/selected">{t('nav.selected')}</a></li>
-                            <li><a href="/about">{t('nav.about.footer')}</a></li>
-                        </ul>
-                    </div>
-
-                    <div class="footer-col">
-                        <h4>{t('footer.social')}</h4>
-                        <ul>
-                            <li><a href="mailto:hola@martarodriguezpalau.org">Email</a></li>
-                            <li><a href="https://www.instagram.com/martarpalau/" target="_blank">Instagram</a></li>
-                            <li><a href="https://www.last.fm/user/Martarodpal" target="_blank">Last.fm</a></li>
-                            <li><a href="https://video.anartist.org/c/pizzaguerri_/videos" target="_blank">Anartist</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="footer-bottom">
-                    <p>&copy; {new Date().getFullYear()} {t('copyrightNotice')}</p>
-                </div>
-            </div>
-        </footer>
+        <Footer lang={lang} />
 
         <script>
             import "../scripts/main.js";

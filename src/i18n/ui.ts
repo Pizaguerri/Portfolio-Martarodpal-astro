@@ -18,7 +18,6 @@ export const ui = {
     'copyrightNotice': 'Marta Rodriguez Palau. Tots els drets reservats.',
     'nav.selected': 'Senzills',
     'nav.projects': 'Projectes',
-    'nav.blog': 'Editorial',
     'nav.about.footer': 'Bio',
     'nav.home': 'Índex',
     'gallery': 'Galeria',
@@ -28,20 +27,31 @@ export const ui = {
     'cv.awards': 'PREMIS',
     'englishSummary': 'Eng',
     'featuredImageAlt': 'portada',
-    'latestPost': 'Darrer post',
-    'alsoAvailableIn': 'També disponible en',
     'requestPrint': 'Vull una còpia impresa',
     'printRequestSubject': 'Print request',
     'printRequestBody': `Hola Marta,
+
 M'agradaria rebre més informació sobre les còpies impreses:
 mides disponibles, preus i opcions d'enviament.
+
 La fotografia que m'interessa és:
+
 - 
+
 Moltes gràcies.
+
 Atentament,`,
+
+    // Arxiu
+    'archive.title': 'INDEX',
+    'archive.galleries': 'COL·LECCIONS',
+    'archive.gallery': 'GALERIA',
+    'archive.project': 'PROJECTE',
+    'archive.undated': 'SENSE DATA',
   },
+
   es: {
-    'nav.index': 'INDEX',
+    'nav.index': 'ÍNDICE',
     'nav.about': 'BIO',
     'menu': 'Menú',
     'home': 'Inicio',
@@ -58,28 +68,38 @@ Atentament,`,
     'copyrightNotice': 'Marta Rodriguez Palau. Todos los derechos reservados.',
     'nav.selected': 'Sencillos',
     'nav.projects': 'Proyectos',
-    'nav.blog': 'Editorial',
     'nav.about.footer': 'Bio',
     'nav.home': 'Índice',
     'gallery': 'Galería',
-    'expos': 'Muestras',
+    'expos': 'Exposiciones',
     'cv.exhibitions': 'EXPOSICIONES',
     'cv.publications': 'PUBLICACIONES Y COLABORACIONES',
     'cv.awards': 'PREMIOS',
     'englishSummary': 'Eng',
     'featuredImageAlt': 'portada',
-    'latestPost': 'Última publicación',
-    'alsoAvailableIn': 'También disponible en',
     'requestPrint': 'Quiero una copia impresa',
     'printRequestSubject': 'Print request',
     'printRequestBody': `Hola Marta,
+
 Me gustaría recibir más información sobre las copias impresas:
 tamaños disponibles, precios y opciones de envío.
+
 La fotografía que me interesa es:
+
 - 
+
 Muchas gracias.
+
 Un saludo,`,
+
+    // Archivo
+    'archive.title': 'ÍNDICE',
+    'archive.galleries': 'COLECCIONES',
+    'archive.gallery': 'GALERÍA',
+    'archive.project': 'PROYECTO',
+    'archive.undated': 'SIN FECHA',
   },
+
   en: {
     'nav.index': 'INDEX',
     'nav.about': 'BIO',
@@ -98,7 +118,6 @@ Un saludo,`,
     'copyrightNotice': 'Marta Rodriguez Palau. All rights reserved.',
     'nav.selected': 'Selected Works',
     'nav.projects': 'Projects',
-    'nav.blog': 'Editorial',
     'nav.about.footer': 'Bio',
     'nav.home': 'Index',
     'gallery': 'Gallery',
@@ -108,16 +127,26 @@ Un saludo,`,
     'cv.awards': 'AWARDS',
     'englishSummary': 'Eng',
     'featuredImageAlt': 'cover',
-    'latestPost': 'Latest post',
-    'alsoAvailableIn': 'Also available in',
     'requestPrint': 'Request a print',
     'printRequestSubject': 'Print request',
-    'printRequestBody': `Hello there, Marta
+    'printRequestBody': `Hello Marta,
+
 I'd like to receive more information about the prints:
 available sizes, prices and shipping options.
-The photograph I'm interested in is:
+
+The photograph I'm interested in:
+
 - 
+
 Thank you very much.
+
 Best,`,
+
+    // Archive
+    'archive.title': 'INDEX',
+    'archive.galleries': 'COLLECTIONS',
+    'archive.gallery': 'GALLERY',
+    'archive.project': 'PROJECT',
+    'archive.undated': 'UNDATED',
   },
 } as const;

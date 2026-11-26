@@ -1,14 +1,17 @@
 {
-  "name": "",
+  "name": "martarodriguezpalau-portfolio",
   "type": "module",
   "version": "0.0.1",
   "engines": {
     "node": ">=22.23.4"
   },
   "scripts": {
+    "predev": "node src/scripts/generate-media-manifest.js",
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "deploy": "npm run build && wrangler deploy",
+    "generate:media": "node src/scripts/generate-media-manifest.js",
     "astro": "astro"
   },
   "dependencies": {
@@ -17,6 +20,7 @@
     "astro-animations": "^0.0.7"
   },
   "devDependencies": {
-    "sass": "^1.107.1"
+    "sass": "^1.107.1",
+    "wrangler": "^4.167.0"
   }
 }

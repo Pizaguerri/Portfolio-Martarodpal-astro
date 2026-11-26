@@ -1,0 +1,88 @@
+
+---
+import { getEntry, getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AboutImage from '../../components/AboutImage.astro';
+import { buildCV } from '../../utils/cv';
+import CVCategory from '../../components/CVCategory.astro';
+
+// Recuperar la biografía y su segundo fragmento
+const bioEntry = await getEntry('bio', 'index.ca');
+const bioAfterEntry = await getEntry('bio', 'index-after.ca');
+
+if (!bioEntry) {
+  throw new Error("No s'ha trobat el fitxer index.ca.md");
+}
+
+if (!bioAfterEntry) {
+  throw new Error("No s'ha trobat el fitxer index-after.ca.md");
+}
+
+const { Content: BioContent } = await render(bioEntry);
+const { Content: BioAfterContent } = await render(bioAfterEntry);
+
+// Recuperar el CV manual
+const manualCVEntry = await getEntry('bio', 'cv.ca');
+const manualCV = manualCVEntry?.data;
+
+// Recuperar proyectos y excluir los borradores
+const projects = await getCollection('work');
+
+const publishedProjects = projects.filter(
+  (project) => !project.data.draft
+);
+
+// Construir el CV combinado
+const fullCV = buildCV(publishedProjects, manualCV);
+---
+
+<BaseLayout
+  title="Sobre jo | Marta Rodriguez Palau"
+  lang="ca"
+>
+  <div
+    class="content-container"
+    style="padding-top: 4rem; padding-bottom: 4rem; min-height: 80vh;"
+  >
+    <div class="prose">
+      <BioContent
+        components={{
+          img: AboutImage,
+        }}
+      />
+
+      <div class="bio-cv">
+        <CVCategory
+          category="exposicions"
+          items={fullCV.exposicions}
+          lang="ca"
+        />
+        <CVCategory
+          category="publicacions_i_col·laboracions"
+          items={fullCV.publicacions_i_col·laboracions}
+          lang="ca"
+        />
+        <CVCategory
+          category="premis"
+          items={fullCV.premis}
+          lang="ca"
+        />
+      </div>
+
+      <BioAfterContent
+        components={{
+          img: AboutImage,
+        }}
+      />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .bio-cv {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin: 3rem 0;
+  }
+</style>

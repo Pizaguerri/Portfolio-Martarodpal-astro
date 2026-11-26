@@ -1,0 +1,377 @@
+[
+  {
+    "path": "bio/about.jpg",
+    "width": 640,
+    "height": 427
+  },
+  {
+    "path": "work/Allà on eres/allaoneres-1.jpg",
+    "width": 758,
+    "height": 508
+  },
+  {
+    "path": "work/Allà on eres/cover.jpg",
+    "width": 758,
+    "height": 508
+  },
+  {
+    "path": "work/Emociòpolis/cover.jpg",
+    "width": 1810,
+    "height": 2560
+  },
+  {
+    "path": "work/Emociòpolis/Emociopolis2.jpg",
+    "width": 1444,
+    "height": 2048
+  },
+  {
+    "path": "work/Emociòpolis/Emociopolis3.jpg",
+    "width": 1448,
+    "height": 2048
+  },
+  {
+    "path": "work/Emociòpolis/Emociopolis4.jpg",
+    "width": 1448,
+    "height": 2048
+  },
+  {
+    "path": "work/Emociòpolis/Emociopolis5.jpg",
+    "width": 1448,
+    "height": 2048
+  },
+  {
+    "path": "work/Emociòpolis/Emociopolis6.jpg",
+    "width": 1444,
+    "height": 2048
+  },
+  {
+    "path": "work/Entre l'Enyor i la Llum/cover.jpg",
+    "width": 1600,
+    "height": 1183
+  },
+  {
+    "path": "work/Entre l'Enyor i la Llum/entrelenyorilallum-1.jpg",
+    "width": 1600,
+    "height": 1183
+  },
+  {
+    "path": "work/Entre l'Enyor i la Llum/entrelenyorilallum-2.jpg",
+    "width": 1600,
+    "height": 1068
+  },
+  {
+    "path": "work/Entre l'Enyor i la Llum/entrelenyorilallum-3.jpg",
+    "width": 1182,
+    "height": 1600
+  },
+  {
+    "path": "work/Entre l'Enyor i la Llum/entrelenyorilallum-4.jpg",
+    "width": 1600,
+    "height": 1590
+  },
+  {
+    "path": "work/Entre l'Enyor i la Llum/entrelenyorilallum-5.jpg",
+    "width": 1600,
+    "height": 1097
+  },
+  {
+    "path": "work/Esquiva/cover.jpg",
+    "width": 1600,
+    "height": 1600
+  },
+  {
+    "path": "work/Esquiva/esquiva.jpg",
+    "width": 1600,
+    "height": 1600
+  },
+  {
+    "path": "work/L'Arbre de la Vida/arbre2.jpg",
+    "width": 1915,
+    "height": 2048
+  },
+  {
+    "path": "work/L'Arbre de la Vida/arbre3.jpg",
+    "width": 2000,
+    "height": 1881
+  },
+  {
+    "path": "work/L'Arbre de la Vida/arbre4.jpg",
+    "width": 768,
+    "height": 772
+  },
+  {
+    "path": "work/L'Arbre de la Vida/arbre5.jpg",
+    "width": 768,
+    "height": 783
+  },
+  {
+    "path": "work/L'Arbre de la Vida/cover.jpg",
+    "width": 2000,
+    "height": 1881
+  },
+  {
+    "path": "work/La Motxilla d'en Max/cover.jpg",
+    "width": 2000,
+    "height": 1225
+  },
+  {
+    "path": "work/La Motxilla d'en Max/motxilla2.jpg",
+    "width": 2000,
+    "height": 1207
+  },
+  {
+    "path": "work/La Motxilla d'en Max/motxilla3.jpg",
+    "width": 2000,
+    "height": 1225
+  },
+  {
+    "path": "work/La Motxilla d'en Max/motxilla4.jpg",
+    "width": 1072,
+    "height": 1038
+  },
+  {
+    "path": "work/La Motxilla d'en Max/motxilla5.jpg",
+    "width": 842,
+    "height": 580
+  },
+  {
+    "path": "work/Pintures a l'oli/cover.jpg",
+    "width": 2000,
+    "height": 1450
+  },
+  {
+    "path": "work/Pintures a l'oli/Pintures1.jpg",
+    "width": 2000,
+    "height": 1450
+  },
+  {
+    "path": "work/Pintures a l'oli/Pintures2.jpg",
+    "width": 712,
+    "height": 1024
+  },
+  {
+    "path": "work/Pintures a l'oli/Pintures3.jpg",
+    "width": 751,
+    "height": 489
+  },
+  {
+    "path": "work/Pintures a l'oli/Pintures4.jpg",
+    "width": 556,
+    "height": 736
+  },
+  {
+    "path": "work/Retrats/cover.jpg",
+    "width": 2000,
+    "height": 1545
+  },
+  {
+    "path": "work/Retrats/Retrats2.jpg",
+    "width": 2000,
+    "height": 1545
+  },
+  {
+    "path": "work/Retrats/Retrats3.jpg",
+    "width": 2000,
+    "height": 1545
+  },
+  {
+    "path": "work/Retrats/Retrats4.jpg",
+    "width": 768,
+    "height": 593
+  },
+  {
+    "path": "work/Retrats/Retrats5.jpg",
+    "width": 768,
+    "height": 593
+  },
+  {
+    "path": "work/Retrats/Retrats6.jpg",
+    "width": 768,
+    "height": 593
+  },
+  {
+    "path": "work/Retrats/Retrats7.jpg",
+    "width": 768,
+    "height": 593
+  },
+  {
+    "path": "work/Retrats/Retrats8.jpg",
+    "width": 768,
+    "height": 593
+  },
+  {
+    "path": "work/Retrats/Retrats9.jpg",
+    "width": 768,
+    "height": 593
+  },
+  {
+    "path": "work/Retrats/Retrats10.jpg",
+    "width": 768,
+    "height": 593
+  },
+  {
+    "path": "work/Retrats/Retrats11.jpg",
+    "width": 768,
+    "height": 593
+  },
+  {
+    "path": "work/Retrats/Retrats12.jpg",
+    "width": 768,
+    "height": 593
+  },
+  {
+    "path": "work/Retrats/Retrats13.jpg",
+    "width": 768,
+    "height": 593
+  },
+  {
+    "path": "work/Retrats/Retrats14.jpg",
+    "width": 768,
+    "height": 593
+  },
+  {
+    "path": "work/Retrats/Retrats15.jpg",
+    "width": 768,
+    "height": 593
+  },
+  {
+    "path": "work/Selected/logo.jpg",
+    "width": 2560,
+    "height": 2543
+  },
+  {
+    "path": "work/Selected/old.png",
+    "width": 674,
+    "height": 300
+  },
+  {
+    "path": "work/Selected/selected - 1.jpg",
+    "width": 1272,
+    "height": 1600
+  },
+  {
+    "path": "work/Selected/selected - 2.jpg",
+    "width": 1293,
+    "height": 1600
+  },
+  {
+    "path": "work/Selected/selected - 3.jpg",
+    "width": 1379,
+    "height": 1600
+  },
+  {
+    "path": "work/Selected/selected - 4.jpg",
+    "width": 1084,
+    "height": 1600
+  },
+  {
+    "path": "work/Selected/selected - 5.jpg",
+    "width": 1600,
+    "height": 1544
+  },
+  {
+    "path": "work/Selected/selected - 6.jpg",
+    "width": 1600,
+    "height": 1201
+  },
+  {
+    "path": "work/Selected/selected - 7.jpg",
+    "width": 1119,
+    "height": 1600
+  },
+  {
+    "path": "work/Selected/selected - 8.jpg",
+    "width": 1256,
+    "height": 1600
+  },
+  {
+    "path": "work/Selected/selected - 9.jpg",
+    "width": 1051,
+    "height": 1600
+  },
+  {
+    "path": "work/Selected/selected - 10.jpg",
+    "width": 1344,
+    "height": 1600
+  },
+  {
+    "path": "work/Selected/selected - 11.jpg",
+    "width": 1600,
+    "height": 1223
+  },
+  {
+    "path": "work/Selected/Sketching1.jpg",
+    "width": 2000,
+    "height": 2301
+  },
+  {
+    "path": "work/Sketching/cover.jpg",
+    "width": 2000,
+    "height": 2301
+  },
+  {
+    "path": "work/Sketching/Sketching1.jpg",
+    "width": 2000,
+    "height": 2301
+  },
+  {
+    "path": "work/Sketching/Sketching2.jpg",
+    "width": 2000,
+    "height": 1319
+  },
+  {
+    "path": "work/Sketching/Sketching3.jpg",
+    "width": 1440,
+    "height": 1440
+  },
+  {
+    "path": "work/Sketching/Sketching4.jpg",
+    "width": 744,
+    "height": 895
+  },
+  {
+    "path": "work/Sketching/Sketching5.jpg",
+    "width": 672,
+    "height": 372
+  },
+  {
+    "path": "work/Sketching/Sketching6.jpg",
+    "width": 712,
+    "height": 793
+  },
+  {
+    "path": "work/Trànsit/cover.jpg",
+    "width": 1600,
+    "height": 1068
+  },
+  {
+    "path": "work/Trànsit/transit - 1.jpg",
+    "width": 1068,
+    "height": 1600
+  },
+  {
+    "path": "work/Trànsit/transit - 2.jpg",
+    "width": 1068,
+    "height": 1600
+  },
+  {
+    "path": "work/Trànsit/transit - 3.jpg",
+    "width": 1068,
+    "height": 1600
+  },
+  {
+    "path": "work/Trànsit/transit - 4.jpg",
+    "width": 1600,
+    "height": 1068
+  },
+  {
+    "path": "work/Trànsit/transit - 5.jpg",
+    "width": 1600,
+    "height": 1068
+  },
+  {
+    "path": "work/Trànsit/transit - 6.jpg",
+    "width": 1172,
+    "height": 1600
+  }
+]

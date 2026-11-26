@@ -1,5 +1,4 @@
 ---
-// Componente que replica el shortcode "print-request" de Hugo
 const email = "hola@martarodriguezpalau.org";
 const subject = "Print request";
 const body = `Hola Marta,
@@ -14,9 +13,8 @@ La fotografia que m'interessa és:
 Moltes gràcies.
 
 Atentament,`;
-const text = "Vull una còpia impressa";
+const text = "Vull una còpia impresa";
 
-// Codificamos el asunto y el cuerpo para que el enlace funcione
 const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 ---
 

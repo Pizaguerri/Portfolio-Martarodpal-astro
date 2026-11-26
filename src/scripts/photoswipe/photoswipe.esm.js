@@ -6273,7 +6273,7 @@ class Opener {
 
 /** @typedef {import('./core/eventable.js').PhotoSwipeFiltersMap} PhotoSwipeFiltersMap */
 
-/** @typedef {import('./slide/get-thumb-bounds').Bounds} Bounds */
+/** @typedef {import('./slide/get-thumb-bounds.js').Bounds} Bounds */
 
 /**
  * @template {keyof PhotoSwipeEventsMap} T
