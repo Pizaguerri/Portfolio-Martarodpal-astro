@@ -1,5 +1,7 @@
 
 import { readdir, mkdir, writeFile } from 'node:fs/promises';
+import { createReadStream } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join, relative, resolve, sep } from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -33,6 +35,17 @@ async function getImageDimensions(filePath) {
   return { width, height };
 }
 
+async function getFileHash(filePath) {
+  return new Promise((resolve, reject) => {
+    const hash = createHash('sha256');
+    const stream = createReadStream(filePath);
+
+    stream.on('data', (chunk) => hash.update(chunk));
+    stream.on('end', () => resolve(hash.digest('hex')));
+    stream.on('error', reject);
+  });
+}
+
 async function collectImages(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
   const images = [];
@@ -49,7 +62,10 @@ async function collectImages(directory) {
 
     if (!IMAGE_EXTENSIONS.has(extension)) continue;
 
-    const dimensions = await getImageDimensions(fullPath);
+    const [dimensions, sha256] = await Promise.all([
+      getImageDimensions(fullPath),
+      getFileHash(fullPath),
+    ]);
 
     const imagePath = relative(CONTENT_DIR, fullPath)
       .split(sep)
@@ -58,6 +74,7 @@ async function collectImages(directory) {
     images.push({
       path: imagePath,
       ...dimensions,
+      sha256,
     });
   }
 

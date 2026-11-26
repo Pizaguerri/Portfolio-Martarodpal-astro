@@ -2,376 +2,505 @@
   {
     "path": "bio/about.jpg",
     "width": 640,
-    "height": 427
-  },
-  {
-    "path": "work/Allà on eres/allaoneres-1.jpg",
-    "width": 758,
-    "height": 508
-  },
-  {
-    "path": "work/Allà on eres/cover.jpg",
-    "width": 758,
-    "height": 508
+    "height": 427,
+    "sha256": "4f1a1ba404a276f946d8565a296231c43f806f24f06404496ceaabb066687797"
   },
   {
     "path": "work/Emociòpolis/cover.jpg",
     "width": 1810,
-    "height": 2560
+    "height": 2560,
+    "sha256": "7fd419c5e0a14c7dab63444474f0fa47af5f669b96b20a0a078dc8a3b5993b41"
   },
   {
     "path": "work/Emociòpolis/Emociopolis2.jpg",
     "width": 1444,
-    "height": 2048
+    "height": 2048,
+    "sha256": "5e46dc2d8eaf0c1915004b5db31e60cf886556f40fa7877319653fa9c555d3aa"
   },
   {
     "path": "work/Emociòpolis/Emociopolis3.jpg",
     "width": 1448,
-    "height": 2048
+    "height": 2048,
+    "sha256": "7d2f8b4ead21a56cbe79e73ebc729f5ef51e791c357b9e83299adcca7108d53c"
   },
   {
     "path": "work/Emociòpolis/Emociopolis4.jpg",
     "width": 1448,
-    "height": 2048
+    "height": 2048,
+    "sha256": "4b38fee1dd82ac79d56fad3d1fb8d1218ec9204f9d45619fee8b0259087fb5ac"
   },
   {
     "path": "work/Emociòpolis/Emociopolis5.jpg",
     "width": 1448,
-    "height": 2048
+    "height": 2048,
+    "sha256": "928a302fd3216041278c8617b676a9fdadc2e99c06234a7c7a1adc33b74b58a2"
   },
   {
     "path": "work/Emociòpolis/Emociopolis6.jpg",
     "width": 1444,
-    "height": 2048
+    "height": 2048,
+    "sha256": "3083faad84b05ab4ac44aa2910efd8127d3a22af39258c05aeca88a7c6b6e99d"
+  },
+  {
+    "path": "work/Empty Chairs/cover.jpg",
+    "width": 2072,
+    "height": 1381,
+    "sha256": "eaa2bf55950159f18287e350c8616b6cdaf7a154fbcb39c689c8f02c7359ba70"
+  },
+  {
+    "path": "work/Empty Chairs/Empty Chairs-01.jpg",
+    "width": 2072,
+    "height": 1381,
+    "sha256": "eaa2bf55950159f18287e350c8616b6cdaf7a154fbcb39c689c8f02c7359ba70"
+  },
+  {
+    "path": "work/Empty Chairs/Empty Chairs-02.jpg",
+    "width": 2100,
+    "height": 1400,
+    "sha256": "15bfb3730e97b7137da68a60acc532255f1ebf6ebcefd22a2d1cd83fa6d140d3"
+  },
+  {
+    "path": "work/Empty Chairs/Empty Chairs-03.jpg",
+    "width": 1669,
+    "height": 1113,
+    "sha256": "277ca7e472364f1d54a594e27ef15f6f89fcb00d82704195bc4419e6e5522c7b"
+  },
+  {
+    "path": "work/Empty Chairs/Empty Chairs-04.jpg",
+    "width": 1859,
+    "height": 1239,
+    "sha256": "1430a9b93314c09e9a4af4e7d84bb5d3f3aaf4b3a60a78d9bfba562b0d792783"
+  },
+  {
+    "path": "work/Empty Chairs/Empty Chairs-05.jpg",
+    "width": 2100,
+    "height": 1400,
+    "sha256": "a1d5ce1e62feaa80b4459323fadafb811725cafada1856235f312c6a345dd3f9"
+  },
+  {
+    "path": "work/Empty Chairs/Empty Chairs-06.jpg",
+    "width": 1954,
+    "height": 1303,
+    "sha256": "620761da493ee664987abf135cd0adf97b663b2de37a63bb14b3f77ce93b9c3a"
+  },
+  {
+    "path": "work/Empty Chairs/Empty Chairs-07.jpg",
+    "width": 1614,
+    "height": 1076,
+    "sha256": "9693d1ce71d8ef4c2396e0b49326a718b0a59c8b47cbc800c80a921cac136658"
+  },
+  {
+    "path": "work/Empty Chairs/Empty Chairs-08.jpg",
+    "width": 1716,
+    "height": 1144,
+    "sha256": "fdcd640a65458e24069ff4ede95246f9f72ab0f72c6ff226e37677ff0ac26493"
+  },
+  {
+    "path": "work/Empty Chairs/Empty Chairs-09.jpg",
+    "width": 1888,
+    "height": 1259,
+    "sha256": "f859ea0547927bcd09fc7e67311abc40efc2defe77006dc1e85144d7c77ee399"
+  },
+  {
+    "path": "work/Empty Chairs/Empty Chairs-10.jpg",
+    "width": 2100,
+    "height": 1400,
+    "sha256": "e8cb5e33db1021509856481b00b35c2335cb46c4c5aceddc6a7a79488c6966c0"
   },
   {
     "path": "work/Entre l'Enyor i la Llum/cover.jpg",
     "width": 1600,
-    "height": 1183
+    "height": 1183,
+    "sha256": "043419ea1e0cfb48ef9844250f6e483f076ebadee690063a3980cace8fd41ddf"
   },
   {
     "path": "work/Entre l'Enyor i la Llum/entrelenyorilallum-1.jpg",
     "width": 1600,
-    "height": 1183
+    "height": 1183,
+    "sha256": "043419ea1e0cfb48ef9844250f6e483f076ebadee690063a3980cace8fd41ddf"
   },
   {
     "path": "work/Entre l'Enyor i la Llum/entrelenyorilallum-2.jpg",
     "width": 1600,
-    "height": 1068
+    "height": 1068,
+    "sha256": "0ba900488698c490a603212f892e25ee5345a48153ae8cb993a63836fb0257da"
   },
   {
     "path": "work/Entre l'Enyor i la Llum/entrelenyorilallum-3.jpg",
     "width": 1182,
-    "height": 1600
+    "height": 1600,
+    "sha256": "72c9fb55443e49e5a465e21acbffb19ecfb27db1f365f913dec3f9c89b13607e"
   },
   {
     "path": "work/Entre l'Enyor i la Llum/entrelenyorilallum-4.jpg",
     "width": 1600,
-    "height": 1590
+    "height": 1590,
+    "sha256": "8e75f21e03ee60c8238df443bbc13740658035a6be2207611228fdfe5a23dac8"
   },
   {
     "path": "work/Entre l'Enyor i la Llum/entrelenyorilallum-5.jpg",
     "width": 1600,
-    "height": 1097
+    "height": 1097,
+    "sha256": "7f2c97e7d9f0e6e3dd176e1d1ef90eb71e6205e3f35c48507ff9c0df162d13a2"
   },
   {
     "path": "work/Esquiva/cover.jpg",
     "width": 1600,
-    "height": 1600
+    "height": 1600,
+    "sha256": "2c63da74d4bd4c8569707f7fd2df42e8e109f58fb400346aca13dcdb626f1002"
   },
   {
     "path": "work/Esquiva/esquiva.jpg",
     "width": 1600,
-    "height": 1600
+    "height": 1600,
+    "sha256": "2c63da74d4bd4c8569707f7fd2df42e8e109f58fb400346aca13dcdb626f1002"
   },
   {
     "path": "work/L'Arbre de la Vida/arbre2.jpg",
     "width": 1915,
-    "height": 2048
+    "height": 2048,
+    "sha256": "df3b2d25f38ccce892ad954cf8c95f39f5ec6e978bc7ddf862f2415049063554"
   },
   {
     "path": "work/L'Arbre de la Vida/arbre3.jpg",
     "width": 2000,
-    "height": 1881
+    "height": 1881,
+    "sha256": "253f76f7f112855f348d1a4808c6477f85224d881a8fad49e3c28aa8bf6a33ad"
   },
   {
     "path": "work/L'Arbre de la Vida/arbre4.jpg",
     "width": 768,
-    "height": 772
+    "height": 772,
+    "sha256": "3a077d9924ac24ab65f2778f43be396c00fb8e161caf27b3b2fb53ed9b896fa4"
   },
   {
     "path": "work/L'Arbre de la Vida/arbre5.jpg",
     "width": 768,
-    "height": 783
+    "height": 783,
+    "sha256": "d0d7df30d7dcf5acd495363746ea10c16d997a7192df493439025c7ae679dcc0"
   },
   {
     "path": "work/L'Arbre de la Vida/cover.jpg",
     "width": 2000,
-    "height": 1881
+    "height": 1881,
+    "sha256": "253f76f7f112855f348d1a4808c6477f85224d881a8fad49e3c28aa8bf6a33ad"
   },
   {
     "path": "work/La Motxilla d'en Max/cover.jpg",
     "width": 2000,
-    "height": 1225
+    "height": 1225,
+    "sha256": "b7c00a8b5181565a9c00357042be5baa4bb6f26b8c751ffa4fb2170da58634d4"
   },
   {
     "path": "work/La Motxilla d'en Max/motxilla2.jpg",
     "width": 2000,
-    "height": 1207
+    "height": 1207,
+    "sha256": "8d1c41fb7f51b244587168dcd2d19c75168e5ea6fb48e1239790fd1fb74adba0"
   },
   {
     "path": "work/La Motxilla d'en Max/motxilla3.jpg",
     "width": 2000,
-    "height": 1225
+    "height": 1225,
+    "sha256": "b7c00a8b5181565a9c00357042be5baa4bb6f26b8c751ffa4fb2170da58634d4"
   },
   {
     "path": "work/La Motxilla d'en Max/motxilla4.jpg",
     "width": 1072,
-    "height": 1038
+    "height": 1038,
+    "sha256": "ae582f06aac916c159cf6f690360ff86e931af08b3a41529859258ef740b684f"
   },
   {
     "path": "work/La Motxilla d'en Max/motxilla5.jpg",
     "width": 842,
-    "height": 580
+    "height": 580,
+    "sha256": "2b66196e5dcb84adef460a0d7fd79da396b4af366a060a5a5cfe271f1549668f"
   },
   {
     "path": "work/Pintures a l'oli/cover.jpg",
     "width": 2000,
-    "height": 1450
+    "height": 1450,
+    "sha256": "6efbc9a1b4dcb70202146b187437373c9989fa1aac253aadfbcbcfdd4478e3b2"
   },
   {
     "path": "work/Pintures a l'oli/Pintures1.jpg",
     "width": 2000,
-    "height": 1450
+    "height": 1450,
+    "sha256": "6efbc9a1b4dcb70202146b187437373c9989fa1aac253aadfbcbcfdd4478e3b2"
   },
   {
     "path": "work/Pintures a l'oli/Pintures2.jpg",
     "width": 712,
-    "height": 1024
+    "height": 1024,
+    "sha256": "23d2104ce982747a6076c5bfcee538ff7d317268c35b69d03bc8e3ba251872c5"
   },
   {
     "path": "work/Pintures a l'oli/Pintures3.jpg",
     "width": 751,
-    "height": 489
+    "height": 489,
+    "sha256": "fc74886631106af43ff0f9e538ca2573a07137099a483fc5bda00f56cb99c2fc"
   },
   {
     "path": "work/Pintures a l'oli/Pintures4.jpg",
     "width": 556,
-    "height": 736
+    "height": 736,
+    "sha256": "30f34a7ddf7548d74f14fc9a9fbc2577817e4a22c1d372bbd5ac6713c3459b77"
   },
   {
     "path": "work/Retrats/cover.jpg",
     "width": 2000,
-    "height": 1545
+    "height": 1545,
+    "sha256": "0050ae7f7e2c3cbd336defbb0c057226320244ce2c902921d07bcd9665c95d89"
   },
   {
     "path": "work/Retrats/Retrats2.jpg",
     "width": 2000,
-    "height": 1545
+    "height": 1545,
+    "sha256": "839df667187cc75a7bab7a1380447aaade141223e79ee27aba0746f454ec0875"
   },
   {
     "path": "work/Retrats/Retrats3.jpg",
     "width": 2000,
-    "height": 1545
+    "height": 1545,
+    "sha256": "81d8d1b1749cafabe6487a6d92f5ad38e4dc9d022de3566a1711022eeea7001e"
   },
   {
     "path": "work/Retrats/Retrats4.jpg",
     "width": 768,
-    "height": 593
+    "height": 593,
+    "sha256": "ce2ff2da70dcb94f68f47d3eed3bb9d2258695933f180fd705e2051a4e569dd0"
   },
   {
     "path": "work/Retrats/Retrats5.jpg",
     "width": 768,
-    "height": 593
+    "height": 593,
+    "sha256": "029bad94d60c797352f1de08f12282648383dfacc6fa0dc85f25e46de7192a2d"
   },
   {
     "path": "work/Retrats/Retrats6.jpg",
     "width": 768,
-    "height": 593
+    "height": 593,
+    "sha256": "946d896c023358b7eabf68472b998543e667fd3e47576467d95aa4d0170cd710"
   },
   {
     "path": "work/Retrats/Retrats7.jpg",
     "width": 768,
-    "height": 593
+    "height": 593,
+    "sha256": "4f7586ed8764a4c469be9c7b4d9796d56ad517f85da52efd34a8ebd5a5c8ce3c"
   },
   {
     "path": "work/Retrats/Retrats8.jpg",
     "width": 768,
-    "height": 593
+    "height": 593,
+    "sha256": "ee66888d5e54e02d51fb89746d3a7e0dc32ea7497c49c0a90d12fc6b43fd91c4"
   },
   {
     "path": "work/Retrats/Retrats9.jpg",
     "width": 768,
-    "height": 593
+    "height": 593,
+    "sha256": "5dfe14fcf660a61effdcf800e3b79df4972fd03c590f8c3917988f5be7023ef3"
   },
   {
     "path": "work/Retrats/Retrats10.jpg",
     "width": 768,
-    "height": 593
+    "height": 593,
+    "sha256": "9744db13722d38c6b1ea9f0780aa9ca527642a33005cd5469544983e99c52d82"
   },
   {
     "path": "work/Retrats/Retrats11.jpg",
     "width": 768,
-    "height": 593
+    "height": 593,
+    "sha256": "0f9d2cb1cb8a6590aab19ca390d91516c10bfae3d17827174a2f2e14956b5be8"
   },
   {
     "path": "work/Retrats/Retrats12.jpg",
     "width": 768,
-    "height": 593
+    "height": 593,
+    "sha256": "0a29d371486a85c45b7f18fabee4944552964a1d31f2fa8ecabeecf3001793e1"
   },
   {
     "path": "work/Retrats/Retrats13.jpg",
     "width": 768,
-    "height": 593
+    "height": 593,
+    "sha256": "5e761b3f1d08f68f39b9872947096bc25f1410970ea0f85ffc4f583e61e7c61d"
   },
   {
     "path": "work/Retrats/Retrats14.jpg",
     "width": 768,
-    "height": 593
+    "height": 593,
+    "sha256": "2b9c565cf3474006aecd8ab85631dc0caeff2766b84a87aa927eddc9cf11a4b6"
   },
   {
     "path": "work/Retrats/Retrats15.jpg",
     "width": 768,
-    "height": 593
+    "height": 593,
+    "sha256": "a9ac62b17e5f730d01b86acd1c8136f534864fa675f588cce514014e50468f80"
   },
   {
     "path": "work/Selected/logo.jpg",
     "width": 2560,
-    "height": 2543
+    "height": 2543,
+    "sha256": "ce65351ab20f7c91d1aec498926fe410a6e263afa5a1d33a767acce9810f138b"
   },
   {
     "path": "work/Selected/old.png",
     "width": 674,
-    "height": 300
+    "height": 300,
+    "sha256": "f6b3cdc1e38162c436be68a1a0e18e2361a078b6d91c47ea2f30486688b7a7f3"
   },
   {
     "path": "work/Selected/selected - 1.jpg",
     "width": 1272,
-    "height": 1600
+    "height": 1600,
+    "sha256": "2edbd344f204bc0d3219fb5bc1dc5073933592c9977611a9443a01b6bfcb4201"
   },
   {
     "path": "work/Selected/selected - 2.jpg",
     "width": 1293,
-    "height": 1600
+    "height": 1600,
+    "sha256": "58ddac8804bdd9e2bfa193f3e38966c03e77c63393f16b6edac262e0f635d9a8"
   },
   {
     "path": "work/Selected/selected - 3.jpg",
     "width": 1379,
-    "height": 1600
+    "height": 1600,
+    "sha256": "341068369de99ed91a4b3b99ca44c9f8ace1f90391e3d39e3f32d98fa7115b75"
   },
   {
     "path": "work/Selected/selected - 4.jpg",
     "width": 1084,
-    "height": 1600
+    "height": 1600,
+    "sha256": "41ec5957e460e52e44dcd0006c05622b19187d428d7e00f8b9fd9d109a25523b"
   },
   {
     "path": "work/Selected/selected - 5.jpg",
     "width": 1600,
-    "height": 1544
+    "height": 1544,
+    "sha256": "271dbe59af823f23030ba4c746c0c502705a475a8a4467bb3df1df2cf8f339f7"
   },
   {
     "path": "work/Selected/selected - 6.jpg",
     "width": 1600,
-    "height": 1201
+    "height": 1201,
+    "sha256": "dd8546e1efed13adc10cc8639d4e5a3acf683cbd9fdcf9fe0d9f35c1c74cae0c"
   },
   {
     "path": "work/Selected/selected - 7.jpg",
     "width": 1119,
-    "height": 1600
+    "height": 1600,
+    "sha256": "56e25061a150702c4b2656ffdb3e8bb5dde57634eff04f74bc1343312a2ba6c8"
   },
   {
     "path": "work/Selected/selected - 8.jpg",
     "width": 1256,
-    "height": 1600
+    "height": 1600,
+    "sha256": "fb379521481cd862a12e143111c7a0d9bec486c8e65d07b5ed097d7d1e8071e7"
   },
   {
     "path": "work/Selected/selected - 9.jpg",
     "width": 1051,
-    "height": 1600
+    "height": 1600,
+    "sha256": "5ebe2a3b24ebf6e19a7edce80f4fb54fecb19806131fb076c6136d2d8cd0637b"
   },
   {
     "path": "work/Selected/selected - 10.jpg",
     "width": 1344,
-    "height": 1600
+    "height": 1600,
+    "sha256": "cbbfd12fd4efa289c2a0bc6a4156d9024d3fddd8fb422678f354d53c18736cd7"
   },
   {
     "path": "work/Selected/selected - 11.jpg",
     "width": 1600,
-    "height": 1223
+    "height": 1223,
+    "sha256": "d913762cd8c72a6c52b146bf51c415f16e298d697713c3aab8a4f71f98785dbc"
   },
   {
     "path": "work/Selected/Sketching1.jpg",
     "width": 2000,
-    "height": 2301
+    "height": 2301,
+    "sha256": "58c5a56973c99cf4c080a562794eef0cefca7e38b6d691e6974829ec491aeb18"
   },
   {
     "path": "work/Sketching/cover.jpg",
     "width": 2000,
-    "height": 2301
+    "height": 2301,
+    "sha256": "58c5a56973c99cf4c080a562794eef0cefca7e38b6d691e6974829ec491aeb18"
   },
   {
     "path": "work/Sketching/Sketching1.jpg",
     "width": 2000,
-    "height": 2301
+    "height": 2301,
+    "sha256": "58c5a56973c99cf4c080a562794eef0cefca7e38b6d691e6974829ec491aeb18"
   },
   {
     "path": "work/Sketching/Sketching2.jpg",
     "width": 2000,
-    "height": 1319
+    "height": 1319,
+    "sha256": "53df4f729fadef771a2dc0ae4bc3990414fdc46bd3526552f852e573b57d590b"
   },
   {
     "path": "work/Sketching/Sketching3.jpg",
     "width": 1440,
-    "height": 1440
+    "height": 1440,
+    "sha256": "1e18641975d709fd0a3ad749eb9b926692e7945d6cae73ccd239ad9b75179267"
   },
   {
     "path": "work/Sketching/Sketching4.jpg",
     "width": 744,
-    "height": 895
+    "height": 895,
+    "sha256": "fd495c8a26362d55980e68c491b68ffac419471276fa6fca35b49421f075e91f"
   },
   {
     "path": "work/Sketching/Sketching5.jpg",
     "width": 672,
-    "height": 372
+    "height": 372,
+    "sha256": "07d44990f4c4d78ace628956da803498ecb8755b16014704a3ffffb7d92970c5"
   },
   {
     "path": "work/Sketching/Sketching6.jpg",
     "width": 712,
-    "height": 793
+    "height": 793,
+    "sha256": "a196f2fd7c94395679f88dbe5c95d4d5c8948fb4811d8226e5bb2b48bdc11101"
   },
   {
     "path": "work/Trànsit/cover.jpg",
     "width": 1600,
-    "height": 1068
+    "height": 1068,
+    "sha256": "06a03220b3745b5e62a54536f173bed95ad1690ce88169f178d4fda60639da27"
   },
   {
     "path": "work/Trànsit/transit - 1.jpg",
     "width": 1068,
-    "height": 1600
+    "height": 1600,
+    "sha256": "0191a06d635da3f8f9c385947bf1aaa1922f6cba60f058ef02d834538e94ec70"
   },
   {
     "path": "work/Trànsit/transit - 2.jpg",
     "width": 1068,
-    "height": 1600
+    "height": 1600,
+    "sha256": "ce2dcc8b85afa0f87711d03d9838b138f284733f02d2b85150ef7641a70d15d3"
   },
   {
     "path": "work/Trànsit/transit - 3.jpg",
     "width": 1068,
-    "height": 1600
+    "height": 1600,
+    "sha256": "9d9829664b8452928069ebd128e5b370dccae3f4af4e256c6ac138cfb10bbe67"
   },
   {
     "path": "work/Trànsit/transit - 4.jpg",
     "width": 1600,
-    "height": 1068
+    "height": 1068,
+    "sha256": "50b56ac95a727319c50bff535ec91fdfe20de6eaf616ebf47ca98351c8f8f8d2"
   },
   {
     "path": "work/Trànsit/transit - 5.jpg",
     "width": 1600,
-    "height": 1068
+    "height": 1068,
+    "sha256": "06a03220b3745b5e62a54536f173bed95ad1690ce88169f178d4fda60639da27"
   },
   {
     "path": "work/Trànsit/transit - 6.jpg",
     "width": 1172,
-    "height": 1600
+    "height": 1600,
+    "sha256": "d69094f1b4e49e10b2449b56dc7687c74fdd974f48252c3d286c90a411c72fab"
   }
 ]
